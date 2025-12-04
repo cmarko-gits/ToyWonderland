@@ -1,0 +1,17 @@
+<div class="container" *ngIf="toy; else loadingTpl">
+  <div class="toy-detail-card">
+    <img [src]="toy.image" alt="{{ toy.name }}" />
+    <div class="toy-info">
+      <h2>{{ toy.name }}</h2>
+      <p><strong>Price:</strong> ${{ toy.price }}</p>
+      <p><strong>In Stock:</strong> {{ toy.inStock }}</p>
+      <p><strong>Age Group:</strong> {{ toy.ageGroup }}</p>
+      <p><strong>Type:</strong> {{ toy.type }}</p>
+      <button class="add-to-cart-btn" (click)="addToCart()">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <p>Loading toy details...</p>
+</ng-template>

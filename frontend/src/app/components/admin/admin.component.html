@@ -1,0 +1,18 @@
+<div class="admin-container">
+  <h2>Admin Panel - Igračke</h2>
+  <p class="message">{{ message }}</p>
+
+  <div class="toy-grid">
+    <div class="toy-card" *ngFor="let toy of toys">
+      <img [src]="toy.image" alt="{{ toy.name }}">
+      <h3>{{ toy.name }}</h3>
+      <p>{{ toy.description }}</p>
+      <p><strong>Tip:</strong> {{ toy.type }}</p>
+      <p><strong>Cena:</strong> ${{ toy.price }}</p>
+      <div class="buttons">
+        <button routerLink="/admin/edit/{{ toy._id }}" class="edit-btn">Edit</button>
+        <button (click)="deleteToy(toy._id)" class="delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div *ngIf="cart$ | async as cart" class="cart-container">
+  <div *ngIf="cart.items.length === 0" class="empty-cart">
+    🛒 Your cart is empty.
+  </div>
+
+  <div class="cart-items">
+    <div *ngFor="let item of cart.items" class="cart-item">
+      <div class="cart-image">
+        <img [src]="item.toyId.image" [alt]="item.toyId.name" />
+      </div>
+      
+      <!-- Wrapper za details + remove dugme -->
+      <div class="cart-details-wrapper">
+        <div class="cart-details">
+          <h3>{{ item.toyId.name }}</h3>
+          <p class="price">$ {{ item.priceAtTheMoment }}</p>
+
+          <div class="quantity-controls">
+            <button (click)="decrease(item)">−</button>
+            <span>{{ item.quantity }}</span>
+            <button (click)="increase(item)">+</button>
+          </div>
+        </div>
+
+        <!-- Remove dugme skroz desno -->
+        <button class="remove-btn" (click)="removeItem(item.toyId._id)">
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="cart.items.length > 0" class="cart-summary">
+    <div class="total">
+      Total: ${{ getTotal(cart) }}
+    </div>
+    <button class="checkout-btn">Checkout</button>
+  </div>
+</div>

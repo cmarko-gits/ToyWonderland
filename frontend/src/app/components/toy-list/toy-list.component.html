@@ -1,0 +1,59 @@
+<div class="container">
+
+  <!-- FILTER SECTION -->
+  <div class="filters">
+    <input type="text" [(ngModel)]="search" (input)="onFilterChange()" placeholder="Pretraga...">
+
+    <select [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+      <option value="">Sve kategorije</option>
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
+
+    <select [(ngModel)]="selectedAgeGroup" (change)="onFilterChange()">
+      <option value="">Sve starosne grupe</option>
+      <option *ngFor="let a of ageGroups" [value]="a">{{ a }}</option>
+    </select>
+
+    <select [(ngModel)]="selectedTargetGroup" (change)="onFilterChange()">
+      <option value="">Svi</option>
+      <option *ngFor="let t of targetGroups" [value]="t">{{ t }}</option>
+    </select>
+
+    <input type="number" [(ngModel)]="minPrice" (input)="onFilterChange()" placeholder="Min cena">
+    <input type="number" [(ngModel)]="maxPrice" (input)="onFilterChange()" placeholder="Max cena">
+
+ 
+
+    <select [(ngModel)]="sortOption" (change)="onFilterChange()">
+      <option value="">Sortiranje</option>
+      <option value="price_asc">Cena: rastuće</option>
+      <option value="price_desc">Cena: opadajuće</option>
+      <option value="newest">Najnovije</option>
+      <option value="oldest">Najstarije</option>
+    </select>
+
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <div *ngIf="!loading; else loadingTemplate" class="grid">
+    <div class="toy-card" *ngFor="let toy of toys">
+      <img [src]="toy.image" alt="{{ toy.name }}">
+      <h3>{{ toy.name }}</h3>
+      <p class="price">{{ toy.price | currency:'EUR' }}</p>
+      <button (click)="addToCart(toy._id)">Dodaj u korpu</button>
+    </div>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="pagination">
+    <button (click)="changePage(false)" [disabled]="page === 1">Prethodna</button>
+    <span>Strana {{ page }} od {{ totalPages }}</span>
+    <button (click)="changePage(true)" [disabled]="page === totalPages">Sledeća</button>
+  </div>
+
+  <!-- LOADING -->
+  <ng-template #loadingTemplate>
+    <p class="loading">Učitavanje...</p>
+  </ng-template>
+
+</div>

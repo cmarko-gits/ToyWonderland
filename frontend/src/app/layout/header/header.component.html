@@ -1,0 +1,37 @@
+<header class="app-header">
+  <div class="container">
+    <div class="logo">
+      <a routerLink="/">ToyWonderland</a>
+    </div>
+
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active">Home</a>
+      <a routerLink="/toys" routerLinkActive="active">Toys</a>
+      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active">Admin</a>
+    </nav>
+
+    <div class="user-actions">
+      <button *ngIf="loggedIn" class="logout-btn" (click)="logout()">Logout</button>
+      <a *ngIf="!loggedIn" routerLink="/login">Login</a>
+      <a *ngIf="!loggedIn" routerLink="/register">Register</a>
+
+      <!-- Ikonica korpe -->
+      <div class="cart-icon" *ngIf="loggedIn" (click)="goToCart()">
+        🛒
+        <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+      </div>
+
+      <button class="menu-btn" (click)="toggleMenu()">☰</button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" *ngIf="menuOpen">
+    <a routerLink="/" (click)="toggleMenu()">Home</a>
+    <a routerLink="/toys" (click)="toggleMenu()">Toys</a>
+    <a *ngIf="isAdmin" routerLink="/admin" (click)="toggleMenu()">Admin</a>
+    <a *ngIf="!loggedIn" routerLink="/login" (click)="toggleMenu()">Login</a>
+    <a *ngIf="!loggedIn" routerLink="/register" (click)="toggleMenu()">Register</a>
+    <button *ngIf="loggedIn" class="logout-btn" (click)="logout(); toggleMenu()">Logout</button>
+  
+  </div>
+</header>

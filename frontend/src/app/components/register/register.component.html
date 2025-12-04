@@ -1,0 +1,38 @@
+<div class="register-container">
+  <div class="register-box">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input formControlName="fullName" type="text" placeholder="John Doe" />
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input formControlName="email" type="email" placeholder="example@mail.com" />
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input formControlName="phone" type="text" placeholder="+381 60 1234567" />
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <input formControlName="address" type="text" placeholder="Belgrade, Serbia" />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input formControlName="password" type="password" placeholder="********" />
+      </div>
+
+      <button type="submit" class="submit-btn">Register</button>
+    </form>
+ <p>Already have an account? <a [routerLink]="['/login']">Login here</a></p>
+ </div>
+
+  <!-- Popup alert -->
+  <div class="popup" *ngIf="showPopup" [ngClass]="{ 'success': success, 'error': !success }">
+    {{ message }}
+  </div>
+</div>
