@@ -5,6 +5,16 @@
     </div>
 
     <div class="header-right">
+      <div class="auth-desktop" *ngIf="isLoggedIn">
+        <a routerLink="/profile" class="user-name-link">Zdravo, {{ fullName }}</a>
+        <button class="logout-btn-desktop" (click)="logout()">Logout</button>
+      </div>
+
+      <div class="auth-desktop" *ngIf="!isLoggedIn">
+        <a routerLink="/login" class="nav-auth-link">Login</a>
+        <a routerLink="/register" class="nav-auth-link register-btn">Register</a>
+      </div>
+
       <button class="theme-toggle" (click)="toggleTheme()" type="button">
         {{ isDarkMode ? '☀️' : '🌙' }}
       </button>
@@ -29,7 +39,7 @@
       <div class="menu-section user-section-mobile">
         <span class="menu-label">Korisnik</span>
         <ng-container *ngIf="isLoggedIn; else authLinks">
-          <a routerLink="/profile" (click)="menuOpen = false">Moj Profil ({{ fullName }})</a>
+          <a routerLink="/profile" (click)="menuOpen = false">Moj Profil</a>
           <a routerLink="/my-reservations" (click)="menuOpen = false">Moje Rezervacije</a>
           <button class="menu-logout-btn" (click)="logout()">Logout</button>
         </ng-container>
