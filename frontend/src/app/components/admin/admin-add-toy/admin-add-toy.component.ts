@@ -61,7 +61,7 @@ export class AdminAddToyComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/admin']);
       }
     });
   }
@@ -72,7 +72,7 @@ export class AdminAddToyComponent implements OnInit {
       : this.adminService.addToy(this.newToy);
 
     action.subscribe({
-      next: () => this.router.navigate(['/admin/dashboard']),
+      next: () => this.router.navigate(['/admin']),
       error: (err) => alert(err.error?.msg || 'Operation failed')
     });
   }

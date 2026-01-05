@@ -4,30 +4,6 @@
       <a routerLink="/" (click)="menuOpen = false">ToyWonderland</a>
     </div>
 
-    <div class="header-right">
-      <div class="auth-desktop" *ngIf="isLoggedIn">
-        <a routerLink="/profile" class="user-name-link">Zdravo, {{ fullName }}</a>
-        <button class="logout-btn-desktop" (click)="logout()">Logout</button>
-      </div>
-
-      <div class="auth-desktop" *ngIf="!isLoggedIn">
-        <a routerLink="/login" class="nav-auth-link">Login</a>
-        <a routerLink="/register" class="nav-auth-link register-btn">Register</a>
-      </div>
-
-      <button class="theme-toggle" (click)="toggleTheme()" type="button">
-        {{ isDarkMode ? '☀️' : '🌙' }}
-      </button>
-
-      <div class="nav-icon-btn cart-mobile" (click)="goToCart()">
-        🛒 <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
-      </div>
-
-      <button class="menu-toggle" (click)="toggleMenu()">
-        {{ menuOpen ? '✕' : '☰' }}
-      </button>
-    </div>
-
     <nav class="nav-links" [class.active]="menuOpen">
       <div class="menu-section">
         <span class="menu-label">Meni</span>
@@ -40,16 +16,49 @@
         <span class="menu-label">Korisnik</span>
         <ng-container *ngIf="isLoggedIn; else authLinks">
           <a routerLink="/profile" (click)="menuOpen = false">Moj Profil</a>
+          <a routerLink="/favorites" (click)="menuOpen = false">Moji Favoriti</a>
           <a routerLink="/my-reservations" (click)="menuOpen = false">Moje Rezervacije</a>
           <button class="menu-logout-btn" (click)="logout()">Logout</button>
         </ng-container>
-        
         <ng-template #authLinks>
           <a routerLink="/login" (click)="menuOpen = false">Login</a>
           <a routerLink="/register" (click)="menuOpen = false" class="mobile-reg-highlight">Register</a>
         </ng-template>
       </div>
     </nav>
+
+    <div class="header-right">
+      
+      <div class="auth-desktop" *ngIf="isLoggedIn">
+        <div class="user-dropdown-container">
+          <button class="user-name-link-btn" (click)="toggleUserMenu($event)">
+            Zdravo, {{ fullName }} <span class="arrow" [class.rotated]="userMenuOpen">▾</span>
+          </button>
+          <div class="user-dropdown-menu" [class.show]="userMenuOpen">
+            <a routerLink="/profile" (click)="userMenuOpen = false">👤 Moj Profil</a>
+            <a routerLink="/favorites" (click)="userMenuOpen = false">❤️ Moji Favoriti</a>
+            <a routerLink="/my-reservations" (click)="userMenuOpen = false">📅 Moje Rezervacije</a>
+            <div class="dropdown-divider"></div>
+            <button class="logout-btn-dropdown" (click)="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-desktop" *ngIf="!isLoggedIn">
+        <a routerLink="/login" class="nav-auth-link">Login</a>
+        <a routerLink="/register" class="nav-auth-link register-btn">Register</a>
+      </div>
+
+      <button class="theme-toggle" (click)="toggleTheme()" type="button">
+        {{ isDarkMode ? '☀️' : '🌙' }}
+      </button>
+
+      <div class="nav-icon-btn cart-icon" (click)="goToCart()">
+        🛒 <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+      </div>
+
+
+    </div>
   </div>
 </header>
 <div class="menu-overlay" [class.active]="menuOpen" (click)="toggleMenu()"></div>

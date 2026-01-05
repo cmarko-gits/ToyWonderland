@@ -175,7 +175,7 @@ export class ChatbotComponent implements OnInit {
               htmlString += `
                 <div style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
                   <b>🧸 ${t.name}</b><br>
-                  💰 Cena: <span style="color: #2ecc71; font-weight: bold;">${t.price} RSD</span><br>
+                  💰 Cena: <span style="color: #2ecc71; font-weight: bold;">${t.price}$</span><br>
                   <a class="bot-link" data-id="${t._id}" style="cursor: pointer; text-decoration: underline; color: #1976d2;">POGLEDAJ I REZERVIŠI</a>
                 </div>`;
             });

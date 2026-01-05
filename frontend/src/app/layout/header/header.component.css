@@ -12,64 +12,15 @@
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Logo levo, Linkovi sredina, Auth desno */
   align-items: center;
   padding: 0 20px;
 }
 
-.logo a {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.auth-desktop {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-name-desktop {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--header-text);
-}
-
-.nav-auth-link {
-  text-decoration: none;
-  color: var(--header-text);
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.register-btn {
-  background: var(--primary-color);
-  color: white !important;
-  padding: 6px 14px;
-  border-radius: 8px;
-}
-
-.logout-btn-desktop {
-  background: #ff7675;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
+/* --- GLAVNI LINKOVI (SREDINA) --- */
 .nav-links {
   display: flex;
-  gap: 25px;
+  gap: 30px;
   align-items: center;
 }
 
@@ -77,133 +28,119 @@
   text-decoration: none;
   color: var(--header-text);
   font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
 }
 
-.nav-links a.active {
+.nav-links a:hover, .nav-links a.active {
   color: var(--primary-color);
 }
 
+.menu-section {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+/* Sakrivamo mobilne labele na desktopu */
 .menu-label, .user-section-mobile {
   display: none;
 }
 
-.cart-mobile {
+/* --- DESNI DEO (AUTH & IKONE) --- */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.auth-desktop {
+  display: flex;
+  align-items: center;
+}
+
+.user-dropdown-container {
   position: relative;
-  font-size: 1.3rem;
-  cursor: pointer;
 }
 
-.cart-count {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  background: #e74c3c;
-  color: white;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 10px;
-}
-
-.menu-toggle {
-  display: none;
+.user-name-link-btn {
   background: none;
   border: none;
-  font-size: 1.8rem;
+  font-weight: 600;
   color: var(--header-text);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.theme-toggle {
-  background: none;
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  background: var(--card-bg);
+  min-width: 200px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
+  display: none;
+  padding: 10px 0;
+}
+
+.user-dropdown-menu.show { display: block; }
+
+.user-dropdown-menu a, .logout-btn-dropdown {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: var(--header-text);
+  font-size: 0.9rem;
+  width: 100%;
+  text-align: left;
   border: none;
-  font-size: 1.2rem;
+  background: none;
   cursor: pointer;
 }
 
-.menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(4px);
-  display: none;
-  z-index: 999;
-}
+.user-dropdown-menu a:hover { background: var(--border-color); }
 
+.dropdown-divider { height: 1px; background: var(--border-color); margin: 5px 0; }
+
+.logout-btn-dropdown { color: #ff7675; font-weight: 700; }
+
+/* --- RESPONSIVE (Ispod 992px prelazi u burger meni) --- */
 @media (max-width: 992px) {
-  .auth-desktop {
-    display: none;
-  }
-
-  .menu-toggle, .menu-overlay.active {
-    display: block;
-  }
+  .menu-toggle { display: block; }
+  .auth-desktop { display: none; } /* Na mobilnom koristimo user-section-mobile unutar nav-links */
 
   .nav-links {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 300px;
+    width: 280px;
     height: 100vh;
     background: var(--card-bg);
     flex-direction: column;
     align-items: flex-start;
-    padding: 80px 40px;
-    gap: 0;
-    transition: 0.4s ease;
-    z-index: 1001;
-    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    padding: 80px 30px;
+    transition: 0.4s;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
   }
 
-  .nav-links.active {
-    right: 0;
-  }
+  .nav-links.active { right: 0; }
 
   .menu-section {
-    width: 100%;
-    margin-bottom: 30px;
-    display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
     gap: 15px;
   }
 
-  .menu-label {
-    display: block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: var(--text-sub);
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-  }
+  .menu-label, .user-section-mobile { display: flex; }
 
   .user-section-mobile {
-    display: flex;
     border-top: 1px solid var(--border-color);
-    padding-top: 25px;
-  }
-
-  .nav-links a {
-    font-size: 1.1rem;
-    width: 100%;
-  }
-
-  .menu-logout-btn {
-    background: #ff7675;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-top: 10px;
-    cursor: pointer;
-    text-align: center;
-  }
-
-  .mobile-reg-highlight {
-    color: var(--primary-color) !important;
-    font-weight: 800;
+    padding-top: 20px;
+    margin-top: 20px;
   }
 }

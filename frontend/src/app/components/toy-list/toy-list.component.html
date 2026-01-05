@@ -40,7 +40,9 @@
 
   <div *ngIf="!loading; else loadingTemplate" class="toys-grid">
     <div class="toy-card" *ngFor="let toy of toys">
-      <span class="favorite-icon" [class.active]="toy.isFavorite" (click)="toggleFavorite(toy, $event)">
+      <span class="favorite-icon" 
+            [class.active]="toy.isFavorite" 
+            (click)="toggleFavorite(toy, $event)">
         ♥
       </span>
       

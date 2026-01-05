@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ToyService } from '../../core/services/toy/toy.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription, Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Subscription, Subject, forkJoin, of } from 'rxjs';
+import { debounceTime, catchError } from 'rxjs/operators';
 import { CartService } from '../../core/services/cart/cart.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -15,19 +15,17 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./toy-list.component.css']
 })
 export class ToyListComponent implements OnInit, OnDestroy {
-
   toys: any[] = [];
   loading = false;
-
+  
   search: string = '';
   selectedCategory: string = '';
   selectedAgeGroup: string = '';
   selectedTargetGroup: string = '';
-  inStockOnly: boolean = false;
   sortOption: string = '';
-
   minPrice?: number;
   maxPrice?: number;
+  inStockOnly: boolean = false;
 
   page = 1;
   limit = 12;
@@ -35,11 +33,10 @@ export class ToyListComponent implements OnInit, OnDestroy {
 
   categories = ["puzzle", "picture book", "figure", "character", "vehicles", "pleated", "other"];
   ageGroups = ["0+", "3+", "4+", "5+", "6+", "7+", "8+"];
-  targetGroups = ["devojčica", "dečak"]
+  targetGroups = ["devojčica", "dečak"];
 
   private filterChanged = new Subject<void>();
   private filterSub!: Subscription;
-  favorites: string[] = [];
 
   constructor(
     private toyService: ToyService,
@@ -50,62 +47,89 @@ export class ToyListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadFavorites();
-
+    // Slušamo promene u URL-u
     this.route.queryParams.subscribe(params => {
-      this.selectedCategory = params['category'] || '';
       this.search = params['search'] || '';
+      this.selectedCategory = params['category'] || '';
       this.selectedTargetGroup = params['targetGroup'] || '';
       this.selectedAgeGroup = params['ageGroup'] || '';
       this.sortOption = params['sort'] || '';
       this.page = params['page'] ? Number(params['page']) : 1;
-      this.inStockOnly = params['inStock'] === 'true';
-
       this.minPrice = params['minPrice'] ? Number(params['minPrice']) : undefined;
       this.maxPrice = params['maxPrice'] ? Number(params['maxPrice']) : undefined;
+      this.inStockOnly = params['inStock'] === 'true';
 
       this.getToys();
     });
 
+    // Debounce za kucanje u search baru
     this.filterSub = this.filterChanged.pipe(debounceTime(400)).subscribe(() => {
-      this.updateUrlAndSearch();
+      this.updateUrl();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.filterSub) {
-      this.filterSub.unsubscribe();
-    }
   }
 
   getToys(): void {
     this.loading = true;
+    const token = localStorage.getItem('token');
 
     const filters: any = {
       page: this.page,
-      limit: this.limit
+      limit: this.limit,
+      search: this.search,
+      category: this.selectedCategory,
+      ageGroup: this.selectedAgeGroup,
+      targetGroup: this.selectedTargetGroup,
+      minPrice: this.minPrice,
+      maxPrice: this.maxPrice,
+      sort: this.sortOption,
+      inStock: this.inStockOnly ? 'true' : undefined
     };
 
-    if (this.search?.trim()) filters.search = this.search;
-    if (this.selectedCategory?.trim()) filters.category = this.selectedCategory;
-    if (this.selectedAgeGroup?.trim()) filters.ageGroup = this.selectedAgeGroup;
-    if (this.selectedTargetGroup?.trim()) filters.targetGroup = this.selectedTargetGroup;
-    if (this.minPrice != null) filters.minPrice = this.minPrice;
-    if (this.maxPrice != null) filters.maxPrice = this.maxPrice;
-    if (this.inStockOnly) filters.inStock = 'true';
-    if (this.sortOption?.trim()) filters.sort = this.sortOption;
+    // Istovremeno učitavamo igračke i favorite da bi srca odmah bila ispravne boje
+    const requests = {
+      toys: this.toyService.getToys(filters),
+      favs: token ? this.toyService.getFavorites().pipe(catchError(() => of({ favorites: [] }))) : of({ favorites: [] })
+    };
 
-    this.toyService.getToys(filters).subscribe({
-      next: res => {
-        this.toys = res.items;
-        this.totalPages = res.totalPages;
+    forkJoin(requests).subscribe({
+      next: (res: any) => {
+        const favoriteIds = res.favs.favorites.map((f: any) => f._id);
+        this.toys = res.toys.items.map((toy: any) => ({
+          ...toy,
+          isFavorite: favoriteIds.includes(toy._id)
+        }));
+        this.totalPages = res.toys.totalPages;
         this.loading = false;
-        this.loadFavorites();
         this.cdr.detectChanges();
       },
-      error: err => {
-        console.error('Error loading toys:', err);
+      error: () => {
         this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleFavorite(toy: any, event: Event): void {
+    event.stopPropagation();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // --- INSTANT UI PROMENA ---
+    const originalValue = toy.isFavorite;
+    toy.isFavorite = !toy.isFavorite;
+
+    this.toyService.toggleFavorite(toy._id).subscribe({
+      next: (res: any) => {
+        // Potvrđujemo vrednost sa servera (obično res.isFavorite)
+        toy.isFavorite = res.isFavorite;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Ako server ne odgovori, vraćamo na staro
+        toy.isFavorite = originalValue;
         this.cdr.detectChanges();
       }
     });
@@ -115,102 +139,42 @@ export class ToyListComponent implements OnInit, OnDestroy {
     this.filterChanged.next();
   }
 
-  private updateUrlAndSearch(): void {
-    const queryParams: any = {};
-
-    if (this.search) queryParams.search = this.search;
-    if (this.selectedCategory) queryParams.category = this.selectedCategory;
-    if (this.selectedTargetGroup) queryParams.targetGroup = this.selectedTargetGroup;
-    if (this.selectedAgeGroup) queryParams.ageGroup = this.selectedAgeGroup;
-    if (this.minPrice) queryParams.minPrice = this.minPrice;
-    if (this.maxPrice) queryParams.maxPrice = this.maxPrice;
-    if (this.sortOption) queryParams.sort = this.sortOption;
-    if (this.inStockOnly) queryParams.inStock = 'true';
-
-    queryParams.page = 1;
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: queryParams
-    });
-  }
-
-  resetFilters(): void {
-    this.search = '';
-    this.selectedCategory = '';
-    this.selectedAgeGroup = '';
-    this.selectedTargetGroup = '';
-    this.minPrice = undefined;
-    this.maxPrice = undefined;
-    this.inStockOnly = false;
-    this.sortOption = '';
-    this.page = 1;
-
-    this.router.navigate([], { queryParams: {} });
-  }
-
-  changePage(next: boolean): void {
-    if (next && this.page < this.totalPages) this.page++;
-    if (!next && this.page > 1) this.page--;
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { page: this.page },
-      queryParamsHandling: 'merge'
-    });
+  private updateUrl(): void {
+    const queryParams: any = {
+      search: this.search || null,
+      category: this.selectedCategory || null,
+      targetGroup: this.selectedTargetGroup || null,
+      ageGroup: this.selectedAgeGroup || null,
+      minPrice: this.minPrice || null,
+      maxPrice: this.maxPrice || null,
+      sort: this.sortOption || null,
+      inStock: this.inStockOnly ? 'true' : null,
+      page: 1
+    };
+    this.router.navigate([], { queryParams, queryParamsHandling: 'merge' });
   }
 
   addToCart(toyId: string): void {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    if (!localStorage.getItem('token')) {
       this.router.navigate(['/login']);
       return;
     }
-
     this.cartService.addToCart(toyId, 1).subscribe({
-      next: () => {
-        console.log('Toy added to cart!');
-      },
-      error: (err) => {
-        console.error('Add to cart error:', err);
-        if (err.status === 401) {
-          this.router.navigate(['/login']);
-        }
-      }
+      next: () => console.log('Ubačeno u korpu'),
+      error: (err) => err.status === 401 && this.router.navigate(['/login'])
     });
   }
 
-  toggleFavorite(toy: any, event: Event) {
-    event.stopPropagation();
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    this.toyService.toggleFavorite(toy._id).subscribe({
-      next: (res: any) => {
-        toy.isFavorite = res.isFavorite;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  loadFavorites(): void {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    this.toyService.getFavorites().subscribe({
-      next: (res: any) => {
-        this.favorites = res.favorites.map((t: any) => t._id);
-        this.toys.forEach(toy => {
-          toy.isFavorite = this.favorites.includes(toy._id);
-        });
-        this.cdr.detectChanges();
-      }
-    });
+  changePage(next: boolean): void {
+    const newPage = next ? this.page + 1 : this.page - 1;
+    this.router.navigate([], { queryParams: { page: newPage }, queryParamsHandling: 'merge' });
   }
 
   openToy(toyId: string): void {
     this.router.navigate(['/toy', toyId]);
+  }
+
+  ngOnDestroy(): void {
+    if (this.filterSub) this.filterSub.unsubscribe();
   }
 }
