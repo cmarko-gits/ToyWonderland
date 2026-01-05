@@ -1,0 +1,36 @@
+<div class="chatbot-wrapper" [class.opened]="opened">
+  <button class="chat-toggle" (click)="toggle()">
+    <span *ngIf="!opened">💬</span>
+    <span *ngIf="opened">✕</span>
+  </button>
+
+  <div class="chat-window" *ngIf="opened">
+    <div class="chat-header">
+      <div class="bot-info">
+        <span class="status-dot"></span>
+        <strong>Toyo Bot 🤖</strong>
+      </div>
+    </div>
+
+    <div class="chat-body" #chatBody (click)="handleChatClick($event)">
+      <div *ngFor="let msg of messages" [class]="msg.from + '-msg-wrapper'">
+        <div [class]="msg.from + '-bubble'" [innerHTML]="msg.text"></div>
+      </div>
+
+      <div class="bot-msg-wrapper" *ngIf="isBotTyping">
+        <div class="bot-bubble typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input 
+        [(ngModel)]="input" 
+        (keyup.enter)="send()" 
+        placeholder="Pitaj me nešto..." 
+      />
+      <button (click)="send()" [disabled]="!input.trim()">🚀</button>
+    </div>
+  </div>
+</div>

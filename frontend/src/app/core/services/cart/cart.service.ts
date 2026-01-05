@@ -12,63 +12,53 @@ export class CartService {
   cart$ = this.cartSubject.asObservable();
 
   constructor(private api: ApiService) {}
- addToCart(toyId: string, quantity: number = 1): Observable<Cart> {
-    return this.api.post<Cart>('cart/add', { toyId, quantity }).pipe(
+
+  addToCart(toyId: string, quantity: number = 1): Observable<Cart> {
+    return this.api.post<Cart>('cart/add', { toyId, quantity }, true).pipe(
       tap(cart => {
-        // update BehaviorSubject-a za instant refresh UI-a
-        this.cartSubject.next({
-          ...cart,
-          items: cart.items.map(i => ({ ...i, toyId: { ...i.toyId } }))
-        });
+        this.cartSubject.next(cart);
       })
     );
   }
 
   getCart(): void {
-    this.api.get<Cart>('cart', true)
-      .pipe(
-        tap((cart: Cart | null) => {
-          if (!cart) return;
+    this.api.get<Cart>('cart', true).subscribe({
+      next: (cart) => {
+        if (cart) {
           this.cartSubject.next(cart);
-        })
-      )
-      .subscribe();
+        }
+      },
+      error: (err) => {
+        console.error("Greška pri učitavanju korpe:", err);
+        if (err.status === 401) {
+          this.cartSubject.next(null);
+        }
+      }
+    });
   }
-changeQuantity(toyId: string, change: number) {
-  return this.api.put<Cart>(`cart/quantity/${toyId}`, { change })
-    .pipe(
+
+  changeQuantity(toyId: string, change: number): Observable<Cart> {
+    return this.api.put<Cart>(`cart/quantity/${toyId}`, { change }, true).pipe(
       tap((updatedCart) => {
-        this.cartSubject.next(updatedCart);  // <<< ISPRAVNO!
-      })
-    )
-    .subscribe();
-}
-
-
-
-removeItem(toyId?: string): void {
-  if (!toyId) return;
-  this.api.delete<Cart>(`cart/${toyId}`)
-    .pipe(
-      tap((cart: Cart | null) => {
-        if (!cart) return;
-
-        const updatedCart: Cart = {
-          ...cart,
-          items: [...cart.items]  
-        };
-
         this.cartSubject.next(updatedCart);
       })
-    )
-    .subscribe();
-}
-
-  getTotalPrice(cart: Cart | null): number {
-    if (!cart) return 0;
-    return cart.items.reduce((sum, item) => sum + item.priceAtTheMoment * item.quantity, 0);
+    );
   }
 
-  
+  removeItem(toyId?: string): void {
+    if (!toyId) return;
+    this.api.delete<Cart>(`cart/${toyId}`, true).subscribe({
+      next: (cart) => {
+        if (cart) {
+          this.cartSubject.next(cart);
+        }
+      },
+      error: (err) => console.error(err)
+    });
+  }
 
+  getTotalPrice(cart: Cart | null): number {
+    if (!cart || !cart.items) return 0;
+    return cart.items.reduce((sum, item) => sum + (item.priceAtTheMoment * item.quantity), 0);
+  }
 }

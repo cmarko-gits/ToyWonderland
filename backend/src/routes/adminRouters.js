@@ -5,25 +5,24 @@ import {
   addToy,
   updateToy,
   deleteToy,
-  getAllToys
+  getAllToys,
+  getAllReservations,
+  updateReservationStatus
 } from "../controllers/adminController.js";
 
 
 const adminRouter = express.Router();
 
-// Dohvatanje admin profila
 adminRouter.get("/profile", auth, isAdmin, getAdminProfile);
 
-// Dodavanje nove igračke
 adminRouter.post("/toys", auth, isAdmin, addToy);
 
-// Izmena postojeće igračke
 adminRouter.put("/toys/:id", auth, isAdmin, updateToy);
 
-// Brisanje igračke
 adminRouter.delete("/toys/:id", auth, isAdmin, deleteToy);
 
-// Dohvatanje svih igračaka
+adminRouter.get("/reservations", auth, isAdmin, getAllReservations);
 adminRouter.get("/toys", auth, isAdmin, getAllToys);
+adminRouter.put("/reservations/:reservationId/status", auth, isAdmin, updateReservationStatus);
 
 export default adminRouter;

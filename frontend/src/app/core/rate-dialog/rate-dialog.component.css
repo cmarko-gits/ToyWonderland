@@ -1,0 +1,195 @@
+/* KONTEJNER MODALA (Glavni prozor) */
+.modal-content {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 450px;
+  border-radius: 35px;
+  padding: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  animation: modalSlideUp 0.4s ease-out;
+}
+
+/* HEADER */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.close-btn {
+  background: var(--input-bg);
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-sub);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.close-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* ZVEZDICE */
+.stars-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+  font-size: 2.8rem;
+}
+
+.star {
+  color: var(--input-border);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  user-select: none;
+}
+
+.star:hover {
+  transform: scale(1.2);
+  color: #ffb800;
+}
+
+.star.active {
+  color: #ffb800 !important;
+  filter: drop-shadow(0 0 10px rgba(255, 184, 0, 0.4));
+  transform: scale(1.1);
+}
+
+/* INFO BOX (Ako je već ocenjeno) */
+.already-rated-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 15px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.already-rated-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.info-icon {
+  background: #3b82f6;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* TEXTAREA */
+.textarea-wrapper {
+  width: 100%;
+}
+
+textarea {
+  width: 100%;
+  height: 130px;
+  background: var(--input-bg);
+  border: 2px solid var(--input-border);
+  border-radius: 20px;
+  padding: 18px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  resize: none;
+  transition: all 0.3s ease;
+}
+
+textarea:focus {
+  border-color: var(--primary);
+  background: transparent;
+}
+
+textarea.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+/* FOOTER DUGMAD */
+.modal-footer {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.modal-footer button {
+  flex: 1;
+  padding: 15px;
+  border-radius: 18px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #3b82f6);
+  color: white;
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 15px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:disabled {
+  background: var(--input-border);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: var(--input-bg);
+  color: var(--text-sub);
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-main);
+}
+
+/* ANIMACIJE */
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

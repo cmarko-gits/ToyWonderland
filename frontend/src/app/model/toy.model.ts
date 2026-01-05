@@ -4,10 +4,12 @@ export interface Review {
   comment: string;
   createdAt?: string;
   updatedAt?: string;
+    userFullName?: string;  // ime korisnika
+
 }
 
 export interface Toy {
-  _id?: string;
+  _id: string;
   name: string;
   description: string;
   type: "puzzle" | "picture book" | "figure" | "character" | "vehicles" | "pleated" | "other";

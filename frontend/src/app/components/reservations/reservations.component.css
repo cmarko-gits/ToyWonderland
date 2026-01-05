@@ -1,0 +1,151 @@
+.reservations-container {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 0 20px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* HEADER STYLE */
+.header-section { margin-bottom: 40px; }
+.header-section h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 5px;
+  letter-spacing: -1px;
+}
+.accent-line {
+  width: 60px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+.subtitle { color: var(--text-sub); font-size: 1.1rem; font-weight: 500; }
+
+/* KARTICA REZERVACIJE */
+.reservation-card {
+  background: var(--card-bg);
+  border-radius: 30px;
+  padding: 30px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+.reservation-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+/* TOP SEKCIJA */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.id-badge {
+  background: var(--input-bg);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-family: 'Monaco', monospace;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.id-badge .hash { color: var(--primary); }
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.status-pill.reserved { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.status-pill.arrived { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.status-pill.canceled { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+/* PROIZVOD REDOVI */
+.product-row {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  background: var(--input-bg);
+  border-radius: 20px;
+  margin-bottom: 12px;
+  transition: 0.2s;
+}
+.product-img-wrapper {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border-radius: 15px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.product-img-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.product-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.info-top { display: flex; justify-content: space-between; align-items: center; }
+.info-top h4 { margin: 0; font-weight: 700; color: var(--text-main); }
+.qty-badge { background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
+
+.info-bottom { display: flex; justify-content: space-between; align-items: center; }
+.item-price { font-weight: 800; color: var(--primary); }
+
+/* DUGMAD */
+.btn-review {
+  background: linear-gradient(135deg, var(--primary), #3b82f6);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-review:hover { filter: brightness(1.2); transform: scale(1.05); }
+
+.rated-label { color: #22c55e; font-weight: 800; font-size: 0.85rem; }
+
+/* FOOTER KARTICE */
+.card-bottom {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px dashed var(--input-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.total-display .label { display: block; font-size: 0.8rem; color: var(--text-sub); font-weight: 600; }
+.total-display .amount { font-size: 1.8rem; font-weight: 900; color: var(--text-main); }
+
+.btn-cancel {
+  background: transparent;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+  padding: 10px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-cancel:hover { background: #ef4444; color: white; }
+
+/* LOADING & ANIMACIJE */
+.loader-wrapper { text-align: center; padding: 100px; }
+.premium-spinner {
+  width: 50px; height: 50px;
+  border: 4px solid var(--input-bg);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

@@ -1,0 +1,39 @@
+<div class="favorites-page container">
+  <h2 class="page-title">Moje omiljene igračke</h2>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && favorites.length === 0" class="empty-state">
+    <img src="assets/empty-favorites.svg" alt="No favorites">
+    <p>Nemate još omiljenih igračaka.</p>
+    <a routerLink="/toys" class="btn-primary">Prikaži igračke</a>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Grid kartica -->
+  <div class="toy-grid" *ngIf="!loading && favorites.length > 0">
+    <div class="toy-card" *ngFor="let toy of favorites">
+      <div class="toy-image-wrapper">
+        <img [src]="toy.image || 'assets/no-image.png'" [alt]="toy.name">
+        <button class="favorite-btn" (click)="toggleFavorite(toy)">
+          <span [ngClass]="{'favorited': toy.isFavorite}">♥</span>
+        </button>
+      </div>
+      <div class="toy-details">
+        <div class="toy-header">
+          <h3>{{ toy.name }}</h3>
+          <p class="type">{{ toy.type | titlecase }}</p>
+        </div>
+        <div class="toy-footer">
+          <p class="price">{{ toy.price}}$</p>
+          <button class="add-cart-btn" >
+            Dodaj u korpu
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

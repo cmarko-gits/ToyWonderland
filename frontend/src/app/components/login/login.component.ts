@@ -8,7 +8,7 @@ import { UserFormValues } from '../../model/user.model';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule,RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -16,6 +16,8 @@ export class LoginComponent {
   loginForm: FormGroup;
   message: string = '';
   showMessage: boolean = false;
+  isError: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,29 +32,31 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      this.showPopup('Please fill in all required fields correctly.');
+      this.showPopup('Please enter valid credentials.', true);
       return;
     }
 
+    this.isLoading = true;
     const userData: UserFormValues = this.loginForm.value;
 
     this.authService.login(userData).subscribe({
-      next: (res) => {
-        localStorage.setItem('token', res.token);
-        this.showPopup('Login successful!');
-        this.router.navigate(['/']); // ili neka glavna stranica
+      next: () => {
+        this.isLoading = false;
+        this.showPopup('Welcome back!', false);
+        setTimeout(() => this.router.navigate(['/']), 1000);
       },
       error: (err) => {
-        this.showPopup(err.error.msg || 'Login failed. Try again.');
+        this.isLoading = false;
+        const errorMsg = err.error?.msg || 'Invalid email or password.';
+        this.showPopup(errorMsg, true);
       }
     });
   }
 
-  showPopup(msg: string) {
+  showPopup(msg: string, error: boolean) {
     this.message = msg;
+    this.isError = error;
     this.showMessage = true;
-    setTimeout(() => {
-      this.showMessage = false;
-    }, 3000); // popup nestaje nakon 3 sekunde
+    setTimeout(() => this.showMessage = false, 4000);
   }
 }

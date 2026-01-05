@@ -12,3 +12,36 @@
   margin-bottom: 30px;
   color: #007bff;
 }
+/* src/styles.css */
+:root {
+  /* LIGHT MODE - Deep Stone (Bez bele) */
+  --bg-color: #78716c; 
+  --bg-gradient: linear-gradient(135deg, #78716c 0%, #57534e 100%);
+  --card-bg: #a8a29e;
+  --text-main: #1c1917;
+  --text-sub: #44403c;
+  --input-bg: #8d8781;
+  --input-border: #57534e;
+  --primary: #292524;
+}
+
+.dark-mode {
+  /* DARK MODE - Ultra Deep Blue */
+  --bg-color: #020617;
+  --bg-gradient: radial-gradient(circle at 10% 10%, #1e1b4b 0%, #020617 100%);
+  --card-bg: #0f172a;
+  --text-main: #cbd5e1;
+  --text-sub: #64748b;
+  --input-bg: #020617;
+  --input-border: #1e293b;
+  --primary: #f1f5f9;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-main);
+  transition: background 0.5s ease, color 0.5s ease;
+  min-height: 100vh;
+}

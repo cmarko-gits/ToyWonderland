@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../core/services/auth/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { CartService } from '../../core/services/cart/cart.service';
 import { Subscription } from 'rxjs';
+import { ThemeService } from '../../core/services/ThemeService.service';
 
 @Component({
   selector: 'app-header',
@@ -14,37 +14,52 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  fullname: string = '';
-  loggedIn: boolean = false;
+  fullName: string = '';
+  isLoggedIn: boolean = false;
   isAdmin: boolean = false;
   menuOpen: boolean = false;
   cartItemCount: number = 0;
 
-  private subscriptions = new Subscription(); // ❗ ovde kreiramo, ne u konstruktoru
+  private subscriptions = new Subscription();
 
   constructor(
     private authService: AuthService,
     private cartService: CartService,
+    public themeService: ThemeService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
+  get isDarkMode(): boolean {
+    return this.themeService.isDarkMode();
+  }
+
   ngOnInit(): void {
     this.subscriptions.add(
-      this.authService.currentUser$.subscribe(user => {
-        this.fullname = user?.fullName || '';
-        this.isAdmin = user?.is_admin === 1;
-        this.loggedIn = !!user;
-        this.cdr.detectChanges();
+      this.authService.currentUser$.subscribe({
+        next: (user) => {
+          this.fullName = user?.fullName || '';
+          this.isAdmin = user?.is_admin === 1;
+          this.isLoggedIn = !!user;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error(err)
       })
     );
 
     this.subscriptions.add(
-      this.cartService.cart$.subscribe(cart => {
-        this.cartItemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
-        this.cdr.detectChanges();
+      this.cartService.cart$.subscribe({
+        next: (cart) => {
+          this.cartItemCount = cart?.items.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error(err)
       })
     );
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   toggleMenu(): void {
@@ -53,18 +68,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
-    this.loggedIn = false;
+    this.isLoggedIn = false;
     this.isAdmin = false;
     this.cartItemCount = 0;
-    this.fullname = '';
-    this.router.navigate(['/']);
+    this.fullName = '';
+    this.menuOpen = false;
+    this.router.navigate(['/login']);
   }
 
   goToCart(): void {
     this.router.navigate(['/cart']);
+    this.menuOpen = false;
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe(); // oslobađamo sve pretplate
+    this.subscriptions.unsubscribe();
   }
 }

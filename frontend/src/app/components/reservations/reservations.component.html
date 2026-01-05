@@ -1,0 +1,77 @@
+<div class="reservations-container" *ngIf="reservations$ | async as reservations; else loading">
+  <div class="header-section">
+    <div class="title-wrapper">
+      <h2>Moje Rezervacije</h2>
+      <div class="accent-line"></div>
+    </div>
+    <p class="subtitle">Pregledajte istoriju vaših porudžbina i ocenite kupljene proizvode</p>
+  </div>
+
+  <div class="reservations-list">
+    <div *ngFor="let r of reservations" class="reservation-card">
+      
+      <div class="card-top">
+        <div class="id-badge">
+          <span class="hash">#</span>
+          <span class="number">{{ r._id | slice:0:8 }}</span>
+        </div>
+        <div class="status-pill" [ngClass]="r.status">
+          <span class="dot"></span>
+          {{ r.status }}
+        </div>
+      </div>
+
+      <div class="card-main">
+        <div *ngFor="let item of r.items" class="product-row">
+          <div class="product-img-wrapper">
+            <img [src]="item.toy.image" alt="{{ item.toy.name }}" />
+          </div>
+          
+          <div class="product-info">
+            <div class="info-top">
+              <h4>{{ item.toy.name }}</h4>
+              <span class="qty-badge">x{{ item.quantity }}</span>
+            </div>
+            
+            <div class="info-bottom">
+              <span class="item-price">{{ item.price | currency:'EUR' }}</span>
+              
+              <div class="action-zone">
+                <button *ngIf="r.status === 'arrived' && !item.reviewed" 
+                        class="btn-review" 
+                        (click)="openRateDialog(item)">
+                  <span class="icon">★</span>
+                  Oceni
+                </button>
+                <span *ngIf="item.reviewed" class="rated-label">Ocenjeno ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-bottom">
+        <div class="total-display">
+          <span class="label">Ukupna vrednost</span>
+          <span class="amount">{{ r.total | currency:'EUR' }}</span>
+        </div>
+        
+        <div class="footer-actions">
+          <button *ngIf="r.status === 'reserved'" 
+                  class="btn-cancel" 
+                  (click)="cancelReservation(r._id)">
+            Otkaži rezervaciju
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loader-wrapper">
+    <div class="premium-spinner"></div>
+    <p>Učitavanje vaših rezervacija...</p>
+  </div>
+</ng-template>

@@ -1,5 +1,5 @@
 import express from 'express'
-import { register,login , getCurrentUser} from '../controllers/authController.js'
+import { register,login , getCurrentUser , updateProfile} from '../controllers/authController.js'
 import { auth , isAdmin } from '../middleware/authMiddlware.js';
 import User from '../models/User.js';
 
@@ -10,7 +10,7 @@ authRouter.get("/profile", auth, (req, res) => {
     res.json({ msg: "Authorized", user: req.user });
 });
 authRouter.get("/me", auth, getCurrentUser);
-
+authRouter.put("/update-profile", auth, updateProfile);
 
 authRouter.get("/admin", auth, isAdmin, async (req, res) => {
     try {

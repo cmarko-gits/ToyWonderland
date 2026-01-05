@@ -1,59 +1,73 @@
 <div class="container">
+  <div class="filters-wrapper">
+    <div class="search-box">
+      <input type="text" [(ngModel)]="search" (input)="onFilterChange()" placeholder="Pretraži igračke...">
+    </div>
 
-  <!-- FILTER SECTION -->
-  <div class="filters">
-    <input type="text" [(ngModel)]="search" (input)="onFilterChange()" placeholder="Pretraga...">
+    <div class="select-group">
+      <select [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+        <option value="">Sve kategorije</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
 
-    <select [(ngModel)]="selectedCategory" (change)="onFilterChange()">
-      <option value="">Sve kategorije</option>
-      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-    </select>
+      <select [(ngModel)]="selectedAgeGroup" (change)="onFilterChange()">
+        <option value="">Uzrast</option>
+        <option *ngFor="let a of ageGroups" [value]="a">{{ a }}</option>
+      </select>
 
-    <select [(ngModel)]="selectedAgeGroup" (change)="onFilterChange()">
-      <option value="">Sve starosne grupe</option>
-      <option *ngFor="let a of ageGroups" [value]="a">{{ a }}</option>
-    </select>
+      <select [(ngModel)]="selectedTargetGroup" (change)="onFilterChange()">
+        <option value="">Pol</option>
+        <option *ngFor="let t of targetGroups" [value]="t">{{ t }}</option>
+      </select>
+    </div>
 
-    <select [(ngModel)]="selectedTargetGroup" (change)="onFilterChange()">
-      <option value="">Svi</option>
-      <option *ngFor="let t of targetGroups" [value]="t">{{ t }}</option>
-    </select>
+    <div class="price-sort-row">
+      <div class="price-group">
+        <input type="number" [(ngModel)]="minPrice" (input)="onFilterChange()" placeholder="Min €">
+        <input type="number" [(ngModel)]="maxPrice" (input)="onFilterChange()" placeholder="Max €">
+      </div>
 
-    <input type="number" [(ngModel)]="minPrice" (input)="onFilterChange()" placeholder="Min cena">
-    <input type="number" [(ngModel)]="maxPrice" (input)="onFilterChange()" placeholder="Max cena">
-
- 
-
-    <select [(ngModel)]="sortOption" (change)="onFilterChange()">
-      <option value="">Sortiranje</option>
-      <option value="price_asc">Cena: rastuće</option>
-      <option value="price_desc">Cena: opadajuće</option>
-      <option value="newest">Najnovije</option>
-      <option value="oldest">Najstarije</option>
-    </select>
-
-  </div>
-
-  <!-- PRODUCTS GRID -->
-  <div *ngIf="!loading; else loadingTemplate" class="grid">
-    <div class="toy-card" *ngFor="let toy of toys">
-      <img [src]="toy.image" alt="{{ toy.name }}">
-      <h3>{{ toy.name }}</h3>
-      <p class="price">{{ toy.price | currency:'EUR' }}</p>
-      <button (click)="addToCart(toy._id)">Dodaj u korpu</button>
+      <div class="sort-box">
+        <select [(ngModel)]="sortOption" (change)="onFilterChange()">
+          <option value="">Sortiraj</option>
+          <option value="price_asc">Cena: Rastuće</option>
+          <option value="price_desc">Cena: Opadajuće</option>
+          <option value="newest">Najnovije</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <!-- PAGINATION -->
-  <div class="pagination">
-    <button (click)="changePage(false)" [disabled]="page === 1">Prethodna</button>
-    <span>Strana {{ page }} od {{ totalPages }}</span>
-    <button (click)="changePage(true)" [disabled]="page === totalPages">Sledeća</button>
+  <div *ngIf="!loading; else loadingTemplate" class="toys-grid">
+    <div class="toy-card" *ngFor="let toy of toys">
+      <span class="favorite-icon" [class.active]="toy.isFavorite" (click)="toggleFavorite(toy, $event)">
+        ♥
+      </span>
+      
+      <div class="image-container" (click)="openToy(toy._id)">
+        <img [src]="toy.image" [alt]="toy.name">
+      </div>
+
+      <div class="card-body">
+        <h3>{{ toy.name }}</h3>
+        <p class="price">{{ toy.price | currency:'EUR' }}</p>
+        <button class="add-btn" (click)="addToCart(toy._id)">
+          Dodaj u korpu
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- LOADING -->
-  <ng-template #loadingTemplate>
-    <p class="loading">Učitavanje...</p>
-  </ng-template>
+  <div class="pagination" *ngIf="!loading && totalPages > 1">
+    <button (click)="changePage(false)" [disabled]="page === 1" class="page-btn">←</button>
+    <span class="page-info">Strana <strong>{{ page }}</strong> od {{ totalPages }}</span>
+    <button (click)="changePage(true)" [disabled]="page === totalPages" class="page-btn">→</button>
+  </div>
 
+  <ng-template #loadingTemplate>
+    <div class="loader-container">
+      <div class="loader"></div>
+      <p>Otkrivamo magiju igračaka...</p>
+    </div>
+  </ng-template>
 </div>

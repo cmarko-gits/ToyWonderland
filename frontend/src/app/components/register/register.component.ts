@@ -16,7 +16,8 @@ export class RegisterComponent {
   registerForm: FormGroup;
   message: string = '';
   showPopup: boolean = false;
-  success: boolean = false;
+  isError: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -34,49 +35,35 @@ export class RegisterComponent {
 
   onSubmit(): void {
     if (this.registerForm.invalid) {
-      this.showMessage('Please fill in all required fields correctly.', false);
+      this.displayPopup('Please fill in all fields correctly.', true);
       return;
     }
 
+    this.isLoading = true;
     const userData: UserFormValues = this.registerForm.value;
 
     this.authService.register(userData).subscribe({
-      next: (res) => {
-        this.showMessage(res.msg || 'Registration successful!', true);
-
-        if (res.token) {
-          // Sačuvaj token
-          localStorage.setItem('token', res.token);
-
-          // Odmah učitaj korisnika i updateuj AuthService
-          this.authService.getCurrentUser().subscribe({
-            next: (userRes) => {
-              // Header će automatski prikazati ime i admin status
-              console.log('User logged in after registration:', userRes.user);
-              setTimeout(() => this.router.navigate(['/']), 500); // idi na Home
-            },
-            error: (err) => {
-              console.error('Greška pri dohvatanju korisnika posle registracije', err);
-              setTimeout(() => this.router.navigate(['/login']), 500);
-            }
-          });
-        }
+      next: () => {
+        this.isLoading = false;
+        this.displayPopup('Registration successful! Redirecting to login...', false);
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2500);
       },
       error: (err) => {
-        const errorMsg = err?.error?.msg || 'Registration failed. Try again.';
-        this.showMessage(errorMsg, false);
-        console.error(err);
+        this.isLoading = false;
+        const errorMsg = err?.error?.msg || 'Registration failed. Email might be taken.';
+        this.displayPopup(errorMsg, true);
       }
     });
   }
 
-  private showMessage(msg: string, isSuccess: boolean) {
+  private displayPopup(msg: string, error: boolean) {
     this.message = msg;
-    this.success = isSuccess;
+    this.isError = error;
     this.showPopup = true;
-
     setTimeout(() => {
       this.showPopup = false;
-    }, 2000);
+    }, 3000);
   }
 }

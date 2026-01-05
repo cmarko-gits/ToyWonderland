@@ -1,8 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-console.log("Loaded MONGO_URI =", process.env.MONGO_URI);
-
-import mongoose from "mongoose";
 import Toy from "./models/Toy.js";
 
 const toys = [
@@ -102,19 +97,18 @@ const toys = [
     inStock: 15,
     reviews: []
   },
- {
-  name: "Noddy Figure",
-  description: "Classic Noddy collectible figur and his car, perfect for kids aged 3+.",
-  type: "figure",
-  ageGroup: "3+",
-  targetGroup: "svi",
-  productionDate: new Date("2024-03-10"),
-  price: 14.99,
-  image: "https://www.svezakucu.rs/pics/items/portal/og/30215.jpg", // ovde ide lokalna slika Noddy-ja
-  inStock: 40,
-  reviews: []
-}
-,
+  {
+    name: "Noddy Figure",
+    description: "Classic Noddy collectible figur and his car, perfect for kids aged 3+.",
+    type: "figure",
+    ageGroup: "3+",
+    targetGroup: "svi",
+    productionDate: new Date("2024-03-10"),
+    price: 14.99,
+    image: "https://www.lulu-berlu.com/upload/image/noddy---ideal-1994-pvc-figure---noddy-p-image-377032-grande.jpg",
+    inStock: 40,
+    reviews: []
+  },
   {
     name: "Hot Wheels Racing Car",
     description: "Metal Hot Wheels race car for boys and collectors.",
@@ -123,29 +117,35 @@ const toys = [
     targetGroup: "dečak",
     productionDate: new Date("2023-11-10"),
     price: 7.99,
-    image: "https://kiddiland.pk/cdn/shop/files/blue_car_01-min_33121b5b-9558-4a73-861f-9baec6e321b9_884x.jpg?v=1733018395",
+    image: "https://i.ebayimg.com/images/g/rSYAAOSwnRRfMUT5/s-l400.jpg",
     inStock: 60,
+    reviews: []
+  },
+  {
+    name: "Barbi i ljubimac",
+    description: "Barbie set sa preslatkim kućnim ljubimcem i dodacima.",
+    type: "figure",
+    ageGroup: "3+",
+    targetGroup: "devojčica",
+    productionDate: new Date("2024-04-01"),
+    price: 24.99,
+    image: "https://toyzzz.rs/wp-content/uploads/2022/01/400548-300x300.jpg",
+    inStock: 15,
     reviews: []
   }
 ];
 
-async function seed() {
+export const seedDatabase = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ Connected to MongoDB");
-
-    await Toy.deleteMany();
-    console.log("🗑️ Cleared old toys");
-
-    await Toy.insertMany(toys);
-    console.log("🎉 Seeded toys successfully");
-
-    mongoose.connection.close();
-    console.log("🔒 MongoDB connection closed");
+    const count = await Toy.countDocuments();
+    if (count === 0) {
+      console.log("📭 Database is empty. Starting seed...");
+      await Toy.insertMany(toys);
+      console.log("🎉 Seeded toys successfully!");
+    } else {
+      console.log(`ℹ️ Database already has ${count} toys. Seed skipped.`);
+    }
   } catch (err) {
     console.error("❌ Seed failed:", err);
-    process.exit(1);
   }
-}
-
-seed();
+};

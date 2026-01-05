@@ -4,8 +4,6 @@ import Toy from "../models/Toy.js";
 export const addToCart = async (req, res) => {
     const { toyId, quantity } = req.body;
     const userId = req.user.id;
-console.log("ADD TO CART BODY:", req.body);
-console.log("USER:", req.user);
 
     try {
         let cart = await Cart.findOne({ userId });
@@ -24,8 +22,9 @@ console.log("USER:", req.user);
                     },
                 ],
             });
-
-            return res.status(201).json(cart);
+            // BITNO: I ovde mora populate pre slanja!
+            const newPopulatedCart = await Cart.findById(cart._id).populate("items.toyId");
+            return res.status(201).json(newPopulatedCart);
         }
 
         const existingItem = cart.items.find(
@@ -43,13 +42,15 @@ console.log("USER:", req.user);
         }
 
         await cart.save();
-        res.json(cart);
+        
+        // Finalno osvežavanje sa svim podacima o igračkama
+        const populatedCart = await Cart.findOne({ userId }).populate("items.toyId");
+        res.json(populatedCart);
     } catch (err) {
         console.error(err);
         res.status(500).json({ msg: "Server error" });
     }
 };
-
 export const getCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user.id }).populate(

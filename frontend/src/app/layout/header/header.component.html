@@ -1,37 +1,45 @@
 <header class="app-header">
   <div class="container">
     <div class="logo">
-      <a routerLink="/">ToyWonderland</a>
+      <a routerLink="/" (click)="menuOpen = false">ToyWonderland</a>
     </div>
 
-    <nav class="nav-links">
-      <a routerLink="/" routerLinkActive="active">Home</a>
-      <a routerLink="/toys" routerLinkActive="active">Toys</a>
-      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active">Admin</a>
-    </nav>
+    <div class="header-right">
+      <button class="theme-toggle" (click)="toggleTheme()" type="button">
+        {{ isDarkMode ? '☀️' : '🌙' }}
+      </button>
 
-    <div class="user-actions">
-      <button *ngIf="loggedIn" class="logout-btn" (click)="logout()">Logout</button>
-      <a *ngIf="!loggedIn" routerLink="/login">Login</a>
-      <a *ngIf="!loggedIn" routerLink="/register">Register</a>
-
-      <!-- Ikonica korpe -->
-      <div class="cart-icon" *ngIf="loggedIn" (click)="goToCart()">
-        🛒
-        <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+      <div class="nav-icon-btn cart-mobile" (click)="goToCart()">
+        🛒 <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
       </div>
 
-      <button class="menu-btn" (click)="toggleMenu()">☰</button>
+      <button class="menu-toggle" (click)="toggleMenu()">
+        {{ menuOpen ? '✕' : '☰' }}
+      </button>
     </div>
-  </div>
 
-  <div class="mobile-menu" *ngIf="menuOpen">
-    <a routerLink="/" (click)="toggleMenu()">Home</a>
-    <a routerLink="/toys" (click)="toggleMenu()">Toys</a>
-    <a *ngIf="isAdmin" routerLink="/admin" (click)="toggleMenu()">Admin</a>
-    <a *ngIf="!loggedIn" routerLink="/login" (click)="toggleMenu()">Login</a>
-    <a *ngIf="!loggedIn" routerLink="/register" (click)="toggleMenu()">Register</a>
-    <button *ngIf="loggedIn" class="logout-btn" (click)="logout(); toggleMenu()">Logout</button>
-  
+    <nav class="nav-links" [class.active]="menuOpen">
+      <div class="menu-section">
+        <span class="menu-label">Meni</span>
+        <a routerLink="/" (click)="menuOpen = false" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        <a routerLink="/toys" (click)="menuOpen = false" routerLinkActive="active">Toys</a>
+        <a *ngIf="isAdmin" (click)="menuOpen = false" routerLink="/admin" routerLinkActive="active">Admin</a>
+      </div>
+
+      <div class="menu-section user-section-mobile">
+        <span class="menu-label">Korisnik</span>
+        <ng-container *ngIf="isLoggedIn; else authLinks">
+          <a routerLink="/profile" (click)="menuOpen = false">Moj Profil ({{ fullName }})</a>
+          <a routerLink="/my-reservations" (click)="menuOpen = false">Moje Rezervacije</a>
+          <button class="menu-logout-btn" (click)="logout()">Logout</button>
+        </ng-container>
+        
+        <ng-template #authLinks>
+          <a routerLink="/login" (click)="menuOpen = false">Login</a>
+          <a routerLink="/register" (click)="menuOpen = false" class="mobile-reg-highlight">Register</a>
+        </ng-template>
+      </div>
+    </nav>
   </div>
 </header>
+<div class="menu-overlay" [class.active]="menuOpen" (click)="toggleMenu()"></div>

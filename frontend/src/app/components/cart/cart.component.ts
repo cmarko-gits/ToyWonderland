@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../core/services/cart/cart.service';
-import { Cart } from '../../model/cart.model';
+import { ReservationService } from '../../core/services/reservation/reservation.service';
+import { Cart, CartItem } from '../../model/cart.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -13,33 +15,60 @@ import { Cart } from '../../model/cart.model';
 })
 export class CartComponent implements OnInit {
   cart$!: Observable<Cart | null>;
+  loading = false;
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    private cartService: CartService,
+    private reservationService: ReservationService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    // poveži cart$ na BehaviorSubject iz servisa
     this.cart$ = this.cartService.cart$;
-
-    // inicijalno učitaj korpu sa servera
     this.cartService.getCart();
   }
 
-  increase(item: any) {
-  this.cartService.changeQuantity(item.toyId._id, +1)
+ increase(item: CartItem) {
+  this.cartService.changeQuantity(item.toyId?._id!, 1).subscribe({
+    error: (err) => console.error('Greška pri povećanju količine:', err)
+  });
 }
 
-decrease(item: any) {
-  this.cartService.changeQuantity(item.toyId._id, -1);
+decrease(item: CartItem) {
+  if (item.quantity <= 1) {
+    this.removeItem(item.toyId?._id!);
+    return;
+  }
+  this.cartService.changeQuantity(item.toyId?._id!, -1).subscribe({
+    error: (err) => console.error('Greška pri smanjenju količine:', err)
+  });
 }
 
+  removeItem(toyId: string) {
+    this.cartService.removeItem(toyId);
+  }
 
   getTotal(cart: Cart | null): number {
     if (!cart) return 0;
-    return cart.items.reduce((sum, item) => sum + item.priceAtTheMoment * item.quantity, 0);
+    return cart.items.reduce(
+      (sum, item) => sum + item.priceAtTheMoment * item.quantity,
+      0
+    );
   }
 
-  removeItem(toyId?: string) {
-    if (!toyId) return;
-    this.cartService.removeItem(toyId);
+  checkout() {
+    if (this.loading) return;
+    this.loading = true;
+
+    this.reservationService.createReservation().subscribe({
+      next: () => {
+        this.cartService.getCart();
+        this.loading = false;
+      },
+      error: err => {
+        console.error(err.error?.msg || 'Reservation failed');
+        this.loading = false;
+      }
+    });
   }
 }

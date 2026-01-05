@@ -1,17 +1,87 @@
-<div class="container" *ngIf="toy; else loadingTpl">
-  <div class="toy-detail-card">
-    <img [src]="toy.image" alt="{{ toy.name }}" />
-    <div class="toy-info">
-      <h2>{{ toy.name }}</h2>
-      <p><strong>Price:</strong> ${{ toy.price }}</p>
-      <p><strong>In Stock:</strong> {{ toy.inStock }}</p>
-      <p><strong>Age Group:</strong> {{ toy.ageGroup }}</p>
-      <p><strong>Type:</strong> {{ toy.type }}</p>
-      <button class="add-to-cart-btn" (click)="addToCart()">Add to Cart</button>
+<div *ngIf="toy" class="toy-detail-container">
+  
+  <div class="product-layout">
+    <div class="image-section">
+      <div class="main-image-card">
+        <img [src]="toy.image" [alt]="toy.name" />
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="badge-row">
+        <span class="category-badge">Premium Igračka</span>
+        <span class="stock-status" [class.out]="toy.inStock === 0">
+          {{ toy.inStock > 0 ? 'Dostupno: ' + toy.inStock : 'Rasprodato' }}
+        </span>
+      </div>
+
+      <h1 class="product-title">{{ toy.name }}</h1>
+      
+      <div class="price-box">
+        <span class="currency">€</span>
+        <span class="amount">{{ toy.price }}</span>
+      </div>
+
+      <div class="description-container">
+        <label>Opis proizvoda</label>
+        <p>{{ toy.description }}</p>
+      </div>
+
+      <div class="action-card">
+        <label>Količina</label>
+        <div class="interaction-row">
+          <div class="stepper">
+            <button (click)="decrease()" [disabled]="quantity <= 0">−</button>
+            <span class="val">{{ quantity }}</span>
+            <button (click)="increase()" [disabled]="quantity >= toy.inStock">+</button>
+          </div>
+          
+          <button class="main-buy-btn" (click)="addToCart()" [disabled]="quantity === 0 || toy.inStock === 0">
+            <span>Dodaj u korpu</span>
+            <i class="cart-icon">🛒</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reviews-layout">
+    <div class="section-header">
+      <h2>Iskustva kupaca</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="reviews-grid">
+      <div *ngIf="canReview && !checkingReviewPermission" class="write-review-card">
+        <h3>Ostavi utisak</h3>
+        <div class="star-picker">
+          <span *ngFor="let s of [1,2,3,4,5]" (click)="setRating(s)" [class.active]="s <= rating">★</span>
+        </div>
+        <textarea [(ngModel)]="comment" placeholder="Kakva su vaša iskustva sa ovom igračkom?"></textarea>
+        <button class="submit-btn" (click)="submitReview()" [disabled]="rating === 0 || !comment">
+          Objavi recenziju
+        </button>
+      </div>
+
+      <div class="reviews-feed" [class.full-width]="!canReview">
+        <div *ngFor="let rev of toy.reviews" class="modern-review">
+          <div class="rev-user">
+            <div class="avatar">{{ rev.userFullName?.charAt(0) || 'A' }}</div>
+            <div class="user-meta">
+              <strong>{{ rev.userFullName || 'Anonimni korisnik' }}</strong>
+              <span>{{ rev.createdAt | date:'longDate' }}</span>
+            </div>
+            <div class="rev-stars">
+              <span *ngFor="let s of [].constructor(rev.rating)">★</span>
+            </div>
+          </div>
+          <p class="rev-text">{{ rev.comment }}</p>
+        </div>
+
+        <div *ngIf="!toy.reviews.length" class="empty-state">
+          Još uvek nema recenzija. Budite prvi koji će oceniti!
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
-<ng-template #loadingTpl>
-  <p>Loading toy details...</p>
-</ng-template>

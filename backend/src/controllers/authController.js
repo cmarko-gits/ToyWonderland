@@ -26,7 +26,56 @@ export const register = async(req,res) => {
   }
 };
 
+export const updateProfile = async (req, res) => {
+  const { fullName, email, phone, address, oldPassword, newPassword } = req.body;
+  const userId = req.user.id;
 
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({ msg: "Email is already in use" });
+      }
+      user.email = email;
+    }
+
+    if (newPassword) {
+      if (!oldPassword) {
+        return res.status(400).json({ msg: "Please provide your current password to set a new one" });
+      }
+
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ msg: "Current password is incorrect" });
+      }
+
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (phone) user.phone = phone;
+    if (address) user.address = address;
+
+    await user.save();
+
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
+
+    res.json({ 
+      msg: "Profile updated successfully", 
+      user: updatedUser 
+    });
+
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+    res.status(500).json({ msg: "Server error during profile update" });
+  }
+};
 
 export const login = async(req,res) => {
   const { email, password } = req.body;

@@ -1,123 +1,166 @@
 .app-header {
-  background-color: #fff;
-  border-bottom: 1px solid #eaeaea;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  position: relative;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.app-header .container {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.cart-icon {
-  position: relative;
-  font-size: 1.5rem;
-  cursor: pointer;
-  margin-left: 1rem;
-  transition: transform 0.2s;
+  padding: 0 20px;
 }
 
-.cart-icon:hover {
-  transform: scale(1.1);
+.logo a {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--header-text);
+  font-weight: 600;
+}
+
+.nav-links a.active {
+  color: var(--primary-color);
+}
+
+.menu-label, .user-section-mobile {
+  display: none;
+}
+
+.cart-mobile {
+  position: relative;
+  font-size: 1.3rem;
+  cursor: pointer;
 }
 
 .cart-count {
   position: absolute;
   top: -8px;
   right: -10px;
-  background-color: #dc3545;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  border-radius: 50%;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.7rem;
   padding: 2px 6px;
+  border-radius: 10px;
 }
 
-.logo a {
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: #333;
-  text-decoration: none;
-}
-
-.nav-links a {
-  margin-right: 1rem;
-  color: #333;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-links a.active,
-.nav-links a:hover {
-  color: #007bff;
-}
-
-.user-actions {
-  display: flex;
-  align-items: center;
-}
-
-.greeting {
-  margin-right: 1rem;
-  font-weight: 500;
-}
-
-.logout-btn {
-  background-color: #ff4d4f;
-  color: #fff;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.logout-btn:hover {
-  background-color: #d9363e;
-}
-
-/* Mobile meni */
-.menu-btn {
+.menu-toggle {
   display: none;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  color: var(--header-text);
   cursor: pointer;
 }
 
-.mobile-menu {
-  display: none;
-  flex-direction: column;
-  background-color: #fff;
-  border-top: 1px solid #eaeaea;
-  position: absolute;
-  top: 100%;
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
   left: 0;
   width: 100%;
-  padding: 1rem 0;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: none;
+  z-index: 999;
 }
 
-.mobile-menu a,
-.mobile-menu button {
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  color: #333;
-  display: block;
-}
-
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
-  .menu-btn {
+@media (max-width: 992px) {
+  .menu-toggle, .menu-overlay.active {
     display: block;
   }
-  .mobile-menu {
-    display: flex;
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: var(--card-bg);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 40px;
+    gap: 0;
+    transition: 0.4s ease;
+    z-index: 1001;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
   }
-  .logout-btn {
-    display: none;
-}
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .menu-section {
+    width: 100%;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .menu-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .user-section-mobile {
+    display: flex;
+    border-top: 1px solid var(--border-color);
+    padding-top: 25px;
+  }
+
+  .nav-links a {
+    font-size: 1.1rem;
+    width: 100%;
+  }
+
+  .menu-logout-btn {
+    background: #ff7675;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .mobile-reg-highlight {
+    color: var(--primary-color) !important;
+    font-weight: 800;
+  }
 }

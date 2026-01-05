@@ -5,9 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { CartService } from '../../core/services/cart/cart.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-toy-list',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './toy-list.component.html',
   styleUrls: ['./toy-list.component.css']
@@ -17,7 +19,6 @@ export class ToyListComponent implements OnInit, OnDestroy {
   toys: any[] = [];
   loading = false;
 
-  // Filters
   search: string = '';
   selectedCategory: string = '';
   selectedAgeGroup: string = '';
@@ -28,36 +29,55 @@ export class ToyListComponent implements OnInit, OnDestroy {
   minPrice?: number;
   maxPrice?: number;
 
-  // Pagination
   page = 1;
   limit = 12;
   totalPages = 1;
 
   categories = ["puzzle", "picture book", "figure", "character", "vehicles", "pleated", "other"];
-  ageGroups = ["0-2", "3-5", "6-8", "9-12", "12+"];
-  targetGroups = ["devojčica", "dečak", "svi"];
+  ageGroups = ["0+", "3+", "4+", "5+", "6+", "7+", "8+"];
+  targetGroups = ["devojčica", "dečak"]
 
   private filterChanged = new Subject<void>();
   private filterSub!: Subscription;
+  favorites: string[] = [];
 
-  constructor(private toyService: ToyService, private cdr: ChangeDetectorRef,private cartService:CartService) {}
+  constructor(
+    private toyService: ToyService,
+    private cdr: ChangeDetectorRef,
+    private cartService: CartService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    // 🔹 Initial load odmah
-    this.getToys();
+    this.loadFavorites();
 
-    // 🔹 Subscribe to filter changes with debounce
-    this.filterSub = this.filterChanged.pipe(debounceTime(300)).subscribe(() => {
-      this.page = 1; // reset page
+    this.route.queryParams.subscribe(params => {
+      this.selectedCategory = params['category'] || '';
+      this.search = params['search'] || '';
+      this.selectedTargetGroup = params['targetGroup'] || '';
+      this.selectedAgeGroup = params['ageGroup'] || '';
+      this.sortOption = params['sort'] || '';
+      this.page = params['page'] ? Number(params['page']) : 1;
+      this.inStockOnly = params['inStock'] === 'true';
+
+      this.minPrice = params['minPrice'] ? Number(params['minPrice']) : undefined;
+      this.maxPrice = params['maxPrice'] ? Number(params['maxPrice']) : undefined;
+
       this.getToys();
+    });
+
+    this.filterSub = this.filterChanged.pipe(debounceTime(400)).subscribe(() => {
+      this.updateUrlAndSearch();
     });
   }
 
   ngOnDestroy(): void {
-    this.filterSub.unsubscribe();
+    if (this.filterSub) {
+      this.filterSub.unsubscribe();
+    }
   }
 
-  // 🔹 Fetch toys
   getToys(): void {
     this.loading = true;
 
@@ -72,7 +92,7 @@ export class ToyListComponent implements OnInit, OnDestroy {
     if (this.selectedTargetGroup?.trim()) filters.targetGroup = this.selectedTargetGroup;
     if (this.minPrice != null) filters.minPrice = this.minPrice;
     if (this.maxPrice != null) filters.maxPrice = this.maxPrice;
-    if (this.inStockOnly != null) filters.inStock = String(this.inStockOnly);
+    if (this.inStockOnly) filters.inStock = 'true';
     if (this.sortOption?.trim()) filters.sort = this.sortOption;
 
     this.toyService.getToys(filters).subscribe({
@@ -80,7 +100,8 @@ export class ToyListComponent implements OnInit, OnDestroy {
         this.toys = res.items;
         this.totalPages = res.totalPages;
         this.loading = false;
-        this.cdr.detectChanges(); // osveži view
+        this.loadFavorites();
+        this.cdr.detectChanges();
       },
       error: err => {
         console.error('Error loading toys:', err);
@@ -90,12 +111,30 @@ export class ToyListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // 🔹 Filter changed
   onFilterChange(): void {
     this.filterChanged.next();
   }
 
-  // 🔹 Reset all filters
+  private updateUrlAndSearch(): void {
+    const queryParams: any = {};
+
+    if (this.search) queryParams.search = this.search;
+    if (this.selectedCategory) queryParams.category = this.selectedCategory;
+    if (this.selectedTargetGroup) queryParams.targetGroup = this.selectedTargetGroup;
+    if (this.selectedAgeGroup) queryParams.ageGroup = this.selectedAgeGroup;
+    if (this.minPrice) queryParams.minPrice = this.minPrice;
+    if (this.maxPrice) queryParams.maxPrice = this.maxPrice;
+    if (this.sortOption) queryParams.sort = this.sortOption;
+    if (this.inStockOnly) queryParams.inStock = 'true';
+
+    queryParams.page = 1;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: queryParams
+    });
+  }
+
   resetFilters(): void {
     this.search = '';
     this.selectedCategory = '';
@@ -107,22 +146,71 @@ export class ToyListComponent implements OnInit, OnDestroy {
     this.sortOption = '';
     this.page = 1;
 
-    this.getToys();
+    this.router.navigate([], { queryParams: {} });
   }
 
-  // 🔹 Pagination
   changePage(next: boolean): void {
     if (next && this.page < this.totalPages) this.page++;
     if (!next && this.page > 1) this.page--;
-    this.getToys();
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: this.page },
+      queryParamsHandling: 'merge'
+    });
   }
 
-  // 🔹 Add to cart
   addToCart(toyId: string): void {
-    if (!toyId) return;
-    this.cartService.addToCart(toyId).subscribe({
-      next: () => alert('Igračka dodata u korpu!'),
-      error: () => alert('Morate biti prijavljeni da biste dodali u korpu.')
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.cartService.addToCart(toyId, 1).subscribe({
+      next: () => {
+        console.log('Toy added to cart!');
+      },
+      error: (err) => {
+        console.error('Add to cart error:', err);
+        if (err.status === 401) {
+          this.router.navigate(['/login']);
+        }
+      }
     });
+  }
+
+  toggleFavorite(toy: any, event: Event) {
+    event.stopPropagation();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.toyService.toggleFavorite(toy._id).subscribe({
+      next: (res: any) => {
+        toy.isFavorite = res.isFavorite;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadFavorites(): void {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    this.toyService.getFavorites().subscribe({
+      next: (res: any) => {
+        this.favorites = res.favorites.map((t: any) => t._id);
+        this.toys.forEach(toy => {
+          toy.isFavorite = this.favorites.includes(toy._id);
+        });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openToy(toyId: string): void {
+    this.router.navigate(['/toy', toyId]);
   }
 }

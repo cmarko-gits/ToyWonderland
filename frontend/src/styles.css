@@ -1,6 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
-
+/* styles.css */
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+body {
+  --bg-color: #cbd5e1;
+  --bg-gradient: radial-gradient(at 0% 0%, #94a3b8 0, transparent 50%), 
+                 radial-gradient(at 100% 0%, #cbd5e1 0, transparent 50%), 
+                 radial-gradient(at 100% 100%, #e2e8f0 0, transparent 50%);
+  --card-bg: #f1f5f9;
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --input-bg: #ffffff;
+  --input-border: #94a3b8;
+  --primary: #0f172a;
+  --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: var(--text-main) !important;
+  transition: all 0.3s ease; 
+}
+
+body.dark-mode {
+  --bg-color: #020617;
+  --bg-gradient: radial-gradient(circle at 10% 10%, #1e1b4b 0%, #020617 100%);
+  --card-bg: #0f172a;
+  --text-main: #cbd5e1;
+  --text-sub: #64748b;
+  --input-bg: #020617;
+  --input-border: #1e293b;
+  --primary: #f1f5f9;
+  
+  background: var(--bg-gradient) !important;
+}
+
+.dark-mode {
+  --bg-color: #020617;
+  --bg-gradient: radial-gradient(circle at 10% 10%, #867ef5 0%, #020617 100%);
+  
+  --card-bg: #222f4e;
+  --text-main: #cbd5e1;
+  --text-sub: #64748b;
+  
+  --input-bg: #020617;
+  --input-border: #1e293b;
+  --input-focus: #38bdf8;
+  
+  --primary: #f1f5f9;
+  --primary-hover: #ffffff;
+  --shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-color) !important;
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: var(--text-main) !important;
+  min-height: 100vh;
+}
+
+/* Resetuj Tailwind-ov default background za sve */
+* {
+  border-color: var(--input-border, currentColor);
+}

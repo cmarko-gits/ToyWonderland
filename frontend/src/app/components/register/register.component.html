@@ -1,5 +1,11 @@
 <div class="register-container">
   <div class="register-box">
+    <div class="header-section">
+      <div class="brand-badge">W</div>
+      <h2>Create Account</h2>
+      <p class="subtitle">Join our community and start your journey today.</p>
+    </div>
+
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label>Full Name</label>
@@ -7,32 +13,38 @@
       </div>
 
       <div class="form-group">
-        <label>Email</label>
-        <input formControlName="email" type="email" placeholder="example@mail.com" />
+        <label>Email Address</label>
+        <input formControlName="email" type="email" placeholder="john@example.com" />
       </div>
 
       <div class="form-group">
-        <label>Phone</label>
-        <input formControlName="phone" type="text" placeholder="+381 60 1234567" />
+        <label>Phone Number</label>
+        <input formControlName="phone" type="text" placeholder="+381..." />
       </div>
 
       <div class="form-group">
-        <label>Address</label>
-        <input formControlName="address" type="text" placeholder="Belgrade, Serbia" />
+        <label>Shipping Address</label>
+        <input formControlName="address" type="text" placeholder="Street, City, Zip" />
       </div>
 
       <div class="form-group">
         <label>Password</label>
-        <input formControlName="password" type="password" placeholder="********" />
+        <input formControlName="password" type="password" placeholder="Min. 6 characters" />
       </div>
 
-      <button type="submit" class="submit-btn">Register</button>
-    </form>
- <p>Already have an account? <a [routerLink]="['/login']">Login here</a></p>
- </div>
+      <button type="submit" class="submit-btn" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="isLoading" class="loader"></span>
+      </button>
 
-  <!-- Popup alert -->
-  <div class="popup" *ngIf="showPopup" [ngClass]="{ 'success': success, 'error': !success }">
-    {{ message }}
+      <p class="footer-link">
+        Already have an account? <a [routerLink]="['/login']">Sign In</a>
+      </p>
+    </form>
+
+    <div class="popup" *ngIf="showPopup" [class.error]="isError" [class.success]="!isError">
+      <span class="status-icon">{{ isError ? '✕' : '✓' }}</span>
+      {{ message }}
+    </div>
   </div>
 </div>

@@ -1,0 +1,88 @@
+<div class="admin-add-container">
+  <div class="form-card" [class.edit-mode]="isEditMode">
+    
+    <div class="form-header">
+      <div class="header-main">
+        <h2>{{ isEditMode ? 'Edit Toy Details' : 'Add New Toy' }}</h2>
+        <span class="id-badge" *ngIf="isEditMode">ID: {{ toyId }}</span>
+      </div>
+      <p>{{ isEditMode ? 'Modify the existing toy specifications' : 'Create a new entry in the toy inventory' }}</p>
+    </div>
+
+    <div class="form-loader-container" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading toy data...</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #toyForm="ngForm" [style.visibility]="loading ? 'hidden' : 'visible'" [style.height]="loading ? '0' : 'auto'">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Toy Name</label>
+          <input type="text" [(ngModel)]="newToy.name" name="name" class="form-control" required placeholder="Enter toy name">
+        </div>
+
+        <div class="form-group full-width">
+          <label>Description</label>
+          <textarea [(ngModel)]="newToy.description" name="description" class="form-control" required placeholder="Describe the toy..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Category / Type</label>
+          <select [(ngModel)]="newToy.type" name="type" class="form-control" required>
+            <option value="puzzle">Puzzle</option>
+            <option value="picture book">Picture Book</option>
+            <option value="figure">Figure</option>
+            <option value="character">Character</option>
+            <option value="vehicles">Vehicles</option>
+            <option value="pleated">Pleated</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Target Group</label>
+          <select [(ngModel)]="newToy.targetGroup" name="targetGroup" class="form-control" required>
+            <option value="dečak">Dečak</option>
+            <option value="devojčica">Devojčica</option>
+            <option value="svi">Svi</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Age Group</label>
+          <input type="text" [(ngModel)]="newToy.ageGroup" name="ageGroup" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Production Date</label>
+          <input type="date" [(ngModel)]="newToy.productionDate" name="productionDate" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Price (€)</label>
+          <input type="number" [(ngModel)]="newToy.price" name="price" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Stock Quantity</label>
+          <input type="number" [(ngModel)]="newToy.inStock" name="inStock" class="form-control" required>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Image URL</label>
+          <input type="text" [(ngModel)]="newToy.image" name="image" class="form-control">
+          <div class="image-preview-wrapper" *ngIf="newToy.image && !loading">
+            <img [src]="newToy.image" alt="Preview">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="goBack()">Discard</button>
+        <button type="submit" class="btn-submit" [disabled]="!toyForm.valid" [class.update-style]="isEditMode">
+          {{ isEditMode ? 'Update Inventory' : 'Confirm & Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

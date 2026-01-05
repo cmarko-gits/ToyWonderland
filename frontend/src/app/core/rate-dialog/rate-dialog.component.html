@@ -1,0 +1,35 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h3>Oceni proizvod</h3>
+    <button class="close-btn" (click)="close()">&times;</button>
+  </div>
+  
+  <div class="rating-body">
+    <div class="stars-container" *ngIf="!data.reviewed">
+      <span *ngFor="let s of [1,2,3,4,5]" 
+            class="star" 
+            [ngClass]="{'active': rating >= s}"
+            (click)="setRating(s)">
+        ★
+      </span>
+    </div>
+
+    <div class="already-rated-info" *ngIf="data.reviewed">
+      <span class="info-icon">ℹ</span>
+      <p>Već ste ocenili ovu igračku zvezdicama. Možete dodati novi komentar.</p>
+    </div>
+    
+    <div class="textarea-wrapper">
+      <textarea 
+        [(ngModel)]="comment" 
+        placeholder="Napišite vaše iskustvo sa ovom igračkom..."
+        [class.error]="!comment && commentTouched">
+      </textarea>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button class="btn-secondary" (click)="close()">Odustani</button>
+    <button class="btn-primary" (click)="submit()">Pošalji ocenu</button>
+  </div>
+</div>
