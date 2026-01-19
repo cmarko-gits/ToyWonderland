@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class RateDialogComponent {
   rating = 0;
   comment = '';
-  commentTouched = false; // Za vizuelnu validaciju
+  commentTouched = false; 
 
   constructor(
     private reservationService: ReservationService,
@@ -30,7 +30,6 @@ export class RateDialogComponent {
     this.commentTouched = true;
 
     if (!this.comment.trim()) {
-      // Umesto alert-a, sada će textarea dobiti crvenu ivicu
       return;
     }
 

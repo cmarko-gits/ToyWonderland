@@ -38,12 +38,10 @@ export class ReservationsComponent {
   dialogRef.afterClosed().subscribe(result => {
     if (!result) return;
 
-    // Ako prvi put, zaključaj rating
     if (!item.reviewed && result.rating) {
       item.reviewed = true;
     }
 
-    // Dodaj samo **novi komentar** iz backend-a
     item.toy.reviews = item.toy.reviews || [];
     item.toy.reviews.push(result);
   });

@@ -103,8 +103,7 @@ export const login = async(req,res) => {
 
 export const getCurrentUser = async (req, res) => {
   try {
-    // req.user je postavljen u auth middleware
-    const user = await User.findById(req.user.id).select("-password"); // ne šalji password
+    const user = await User.findById(req.user.id).select("-password"); 
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     res.json({ msg: "User fetched", user });

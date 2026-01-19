@@ -45,7 +45,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.statusMessage = '';
     
-    // We send the whole object. Backend will check if oldPassword is provided if needed.
     this.authService.updateProfile(this.userData).subscribe({
       next: (res) => {
         this.loading = false;
@@ -57,7 +56,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.loading = false;
         this.isError = true;
-        // Display the specific error message from your Node.js backend (e.g., "Current password is incorrect")
         this.statusMessage = err.error?.msg || 'Failed to update profile.';
       }
     });

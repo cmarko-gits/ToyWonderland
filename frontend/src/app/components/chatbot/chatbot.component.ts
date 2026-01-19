@@ -32,7 +32,7 @@ export class ChatbotComponent implements OnInit {
   categoryMap: any = {
     'puzzle': 'puzzle', 'slikovnice': 'picture book', 'knjige': 'picture book',
     'figure': 'figure', 'figurice': 'figure', 'karakteri': 'character',
-    'vozila': 'vehicles', 'autići': 'vehicles', 'plišane': 'pleated', 'ostalo': 'other'
+    'vozila': 'vehicles', 'autići': 'vehicles', 'plišane': 'plush', 'ostalo': 'other'
   };
 
   private currentFilters: any = {};
@@ -55,9 +55,7 @@ export class ChatbotComponent implements OnInit {
 
   toggle() { 
     this.opened = !this.opened; 
-    if (this.opened) {
-      this.scrollToBottom();
-    }
+    if (this.opened) this.scrollToBottom();
   }
 
   toggleDarkMode() {
@@ -97,6 +95,7 @@ export class ChatbotComponent implements OnInit {
 
   private processCommand(text: string) {
     const sanitizedText = text.replace(/[.*+?^${}()|[\]\\]/g, '').trim();
+    let params: any = {};
 
     if (sanitizedText.includes('omiljen') || sanitizedText.includes('favorites')) {
       this.isBotTyping = false;
@@ -110,38 +109,34 @@ export class ChatbotComponent implements OnInit {
        return setTimeout(() => this.zone.run(() => this.router.navigate(['/'])), 1000);
     }
 
-    if (sanitizedText.includes('sve igracke') || sanitizedText.includes('sve igračke') || sanitizedText.includes('sve kategorije')) {
+    if (sanitizedText.includes('sve igracke') || sanitizedText.includes('sve igračke')) {
       this.currentFilters = {};
       return this.executeSearch({});
     }
 
-    if (['zdravo', 'ćao', 'cao', 'pozdrav', 'dobar dan'].some(p => sanitizedText.includes(p))) {
+    if (['zdravo', 'ćao', 'cao', 'pozdrav'].some(p => sanitizedText.includes(p))) {
       this.isBotTyping = false;
       return this.addBotMessage('Zdravo! Drago mi je što se vidimo. Kako ti mogu pomoći u potrazi?', true);
     }
 
-    let params: any = {};
     const matches = sanitizedText.match(/\d+/g);
     const numbers = matches ? matches.map(Number) : null;
+    const isAge = sanitizedText.includes('godin') || sanitizedText.includes('uzrast');
 
     if (numbers && numbers.length > 0) {
-      if (sanitizedText.includes('od') && sanitizedText.includes('do') && numbers.length >= 2) {
-        if (sanitizedText.includes('godin') || sanitizedText.includes('uzrast')) {
-          params.minAge = numbers[0]; params.maxAge = numbers[1];
+      if (numbers.length >= 2) {
+        if (isAge) { params.minAge = numbers[0]; params.maxAge = numbers[1]; }
+        else { params.minPrice = numbers[0]; params.maxPrice = numbers[1]; }
+      } else {
+        if (sanitizedText.includes('do') || sanitizedText.includes('ispod') || sanitizedText.includes('manje od')) {
+          if (isAge) params.maxAge = numbers[0]; else params.maxPrice = numbers[0];
+        } else if (sanitizedText.includes('od') || sanitizedText.includes('iznad') || sanitizedText.includes('vise od')) {
+          if (isAge) params.minAge = numbers[0]; else params.minPrice = numbers[0];
         } else {
-          params.minPrice = numbers[0]; params.maxPrice = numbers[1];
+          if (isAge) params.maxAge = numbers[0]; else params.maxPrice = numbers[0];
         }
-      } else if (sanitizedText.includes('od') || sanitizedText.includes('iznad')) {
-        if (sanitizedText.includes('godin')) params.minAge = numbers[0];
-        else params.minPrice = numbers[0];
-      } else if (sanitizedText.includes('do') || sanitizedText.includes('ispod')) {
-        if (sanitizedText.includes('godin')) params.maxAge = numbers[0];
-        else params.maxPrice = numbers[0];
       }
     }
-
-    if (sanitizedText.includes('skuplje')) params.sort = 'price_desc';
-    else if (sanitizedText.includes('jeftinije')) params.sort = 'price_asc';
 
     for (const key in this.categoryMap) {
       if (sanitizedText.includes(key)) {
@@ -152,6 +147,9 @@ export class ChatbotComponent implements OnInit {
 
     if (sanitizedText.includes('devojcic')) params.targetGroup = 'devojčica';
     else if (sanitizedText.includes('decak')) params.targetGroup = 'dečak';
+
+    if (sanitizedText.includes('skuplje')) params.sort = 'price_desc';
+    else if (sanitizedText.includes('jeftinije')) params.sort = 'price_asc';
 
     if (Object.keys(params).length === 0) {
       params.search = sanitizedText;
@@ -169,30 +167,33 @@ export class ChatbotComponent implements OnInit {
         this.zone.run(() => {
           this.isBotTyping = false;
           const toys = response.items || [];
+          
           if (toys.length > 0) {
             let htmlString = `🔍 <b>Pronašao sam (${response.totalItems}):</b><br><br>`;
             toys.forEach((t: any) => {
               htmlString += `
-                <div style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-                  <b>🧸 ${t.name}</b><br>
-                  💰 Cena: <span style="color: #2ecc71; font-weight: bold;">${t.price} RSD</span><br>
-                  <a class="bot-link" data-id="${t._id}" style="cursor: pointer; text-decoration: underline; color: #1976d2;">POGLEDAJ I REZERVIŠI</a>
+                <div style="margin-bottom: 12px; background: #fff; border-radius: 12px; padding: 10px; border: 1px solid #eee; color: #333;">
+                  <b style="font-size: 14px;">🧸 ${t.name}</b><br>
+                  💰 Cena: <span style="color: #2ecc71; font-weight: bold;">${t.price} $</span><br>
+                  <a class="bot-link" data-id="${t._id}" style="cursor: pointer; text-decoration: underline; color: #1976d2; font-size: 12px; font-weight: bold;">POGLEDAJ I REZERVIŠI</a>
                 </div>`;
             });
             htmlString += `
-              <div style="text-align: center; margin-top: 10px;">
-                <a class="bot-link-all" style="cursor: pointer; font-weight: bold; color: #1976d2;">👉 VIDI SVE REZULTATE</a>
+              <div style="text-align: center; margin-top: 5px;">
+                <a class="bot-link-all" style="cursor: pointer; font-weight: bold; color: #1976d2; font-size: 13px;">👉 VIDI SVE REZULTATE</a>
               </div>`;
             this.addBotMessage(this.sanitizer.bypassSecurityTrustHtml(htmlString), true);
           } else {
-            this.addBotMessage('Nažalost, nisam pronašao ništa što odgovara tvojoj pretrazi.', true);
+            this.addBotMessage('Nažalost, trenutno nemam igračaka koje odgovaraju tim kriterijumima. Pokušaj ponovo! 😔', true);
           }
+          this.cdr.detectChanges();
         });
       },
       error: () => {
         this.zone.run(() => {
           this.isBotTyping = false;
-          this.addBotMessage('Došlo je do greške pri pretrazi.', true);
+          this.addBotMessage('Ups! Došlo je do greške pri pretrazi.', true);
+          this.cdr.detectChanges();
         });
       }
     });
@@ -202,6 +203,7 @@ export class ChatbotComponent implements OnInit {
     const pushMessage = () => {
       this.zone.run(() => {
         this.messages = [...this.messages, { from: 'bot', text }];
+        this.isBotTyping = false;
         this.cdr.markForCheck();
         this.cdr.detectChanges();
         this.scrollToBottom();
@@ -214,12 +216,14 @@ export class ChatbotComponent implements OnInit {
   private scrollToBottom() {
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => {
-        if (this.chatBody) {
-          const el = this.chatBody.nativeElement;
-          el.scrollTop = el.scrollHeight;
-          this.cdr.detectChanges();
-        }
-      }, 50);
+        this.zone.run(() => {
+          if (this.chatBody) {
+            const el = this.chatBody.nativeElement;
+            el.scrollTop = el.scrollHeight;
+            this.cdr.detectChanges();
+          }
+        });
+      }, 60);
     }
   }
 }

@@ -137,15 +137,15 @@ const toys = [
 
 export const seedDatabase = async () => {
   try {
-    const count = await Toy.countDocuments();
+    const count = await Toy.countDocuents();
     if (count === 0) {
       console.log("📭 Database is empty. Starting seed...");
       await Toy.insertMany(toys);
       console.log("🎉 Seeded toys successfully!");
     } else {
-      console.log(`ℹ️ Database already has ${count} toys. Seed skipped.`);
+      console.log(`ℹDatabase already has ${count} toys. Seed skipped.`);
     }
   } catch (err) {
-    console.error("❌ Seed failed:", err);
+    console.error("Seed failed:", err);
   }
 };

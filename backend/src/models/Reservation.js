@@ -4,7 +4,7 @@ const reservationItemSchema = new mongoose.Schema({
   toy: { type: mongoose.Schema.Types.ObjectId, ref: "Toys", required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
-  reviewed: { type: Boolean, default: false } // <-- ovde
+  reviewed: { type: Boolean, default: false } 
 });
 
 const reservationSchema = new mongoose.Schema({

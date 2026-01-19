@@ -1,4 +1,3 @@
-/* KONTEJNER MODALA (Glavni prozor) */
 .modal-content {
   background: var(--card-bg);
   width: 100%;
@@ -10,7 +9,6 @@
   animation: modalSlideUp 0.4s ease-out;
 }
 
-/* HEADER */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -45,7 +43,6 @@
   color: white;
 }
 
-/* ZVEZDICE */
 .stars-container {
   display: flex;
   justify-content: center;
@@ -72,7 +69,6 @@
   transform: scale(1.1);
 }
 
-/* INFO BOX (Ako je već ocenjeno) */
 .already-rated-info {
   display: flex;
   align-items: center;
@@ -105,7 +101,6 @@
   flex-shrink: 0;
 }
 
-/* TEXTAREA */
 .textarea-wrapper {
   width: 100%;
 }
@@ -135,7 +130,6 @@ textarea.error {
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
 }
 
-/* FOOTER DUGMAD */
 .modal-footer {
   display: flex;
   gap: 15px;
@@ -182,7 +176,6 @@ textarea.error {
   color: var(--text-main);
 }
 
-/* ANIMACIJE */
 @keyframes modalSlideUp {
   from {
     opacity: 0;

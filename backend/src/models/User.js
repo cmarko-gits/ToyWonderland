@@ -7,8 +7,8 @@ const UserSchema = new mongoose.Schema({
   address: { type: String, required: true },
   password: { type: String, required: true },
   is_admin: { type: Number, default: 0 },
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Toys" }], // OMILJENE IGRAČKE
- reservations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Toys" }], // opcionalno
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Toys" }],
+ reservations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Toys" }], 
 }, { timestamps: true });
 
 export default mongoose.model("User", UserSchema);

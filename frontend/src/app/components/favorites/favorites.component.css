@@ -1,53 +1,53 @@
-/* Glavni kontejner */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
 .container {
-  max-width: 1300px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding: 40px 20px;
-  font-family: 'Inter', sans-serif;
+  padding: 30px 25px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: #333;
-  background-color: #f5f6fa;
+  background-color: #f8f9fc;
 }
 
 .page-title {
   text-align: center;
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 40px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1a2a3a;
+  margin-bottom: 45px;
+  letter-spacing: -0.5px;
 }
 
-/* Grid kartica sa modernim gap-om */
 .toy-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px;
 }
 
-/* Kartica igračke */
 .toy-card {
-  background: linear-gradient(145deg, #ffffff, #f0f3f8);
-  border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  position: relative;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  border: 1px solid #edf0f5;
 }
 
 .toy-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
-  background: linear-gradient(145deg, #ffffff, #e9f1ff);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* Slika igračke */
 .toy-image-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* square container */
-  background-color: #f0f3f8;
-  border-bottom: 1px solid #e1e5eb;
+  padding-top: 95%;
+  background-color: #fcfdfe;
+  border-bottom: 1px solid #f0f2f5;
   overflow: hidden;
 }
 
@@ -56,127 +56,115 @@
   top: 50%;
   left: 50%;
   width: auto;
-  height: 100%;
+  height: 80%;
   transform: translate(-50%, -50%);
   object-fit: contain;
-  transition: transform 0.35s ease;
+  transition: transform 0.5s ease;
 }
 
 .toy-card:hover img {
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* Dugme za favorite */
 .favorite-btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 15px;
+  right: 15px;
   background: rgba(255, 255, 255, 0.95);
   border: none;
   border-radius: 50%;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.5rem;
-  transition: transform 0.3s, background 0.3s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 1.3rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 5;
 }
 
 .favorite-btn:hover {
-  transform: scale(1.2);
-  background: #fff;
+  transform: scale(1.15);
+  background: #ffffff;
 }
 
 .favorite-btn span {
-  color: #bbb;
-  transition: color 0.3s;
+  color: #d1d5db;
 }
 
 .favorite-btn span.favorited {
-  color: #e74c3c; /* premium crveno srce */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  color: #ff4757;
 }
 
-/* Detalji igračke */
 .toy-details {
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 12px;
   flex-grow: 1;
 }
 
 .toy-header h3 {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
   margin: 0;
   line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .toy-header .type {
-  font-size: 0.9rem;
-  color: #7f8c8d;
-  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 5px;
   text-transform: capitalize;
+  display: block;
 }
 
 .toy-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #f8fafc;
 }
 
 .toy-footer .price {
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: #27ae60;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #10b981;
 }
 
-/* Add to cart dugme sa gradientom */
 .add-cart-btn {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: #fff;
+  background: #1e293b;
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
 }
 
 .add-cart-btn:hover {
-  background: linear-gradient(135deg, #2980b9, #1c5980);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-/* Loading i prazno stanje */
-.loading, .empty-state {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #555;
-  padding: 80px 0;
-}
-
-.empty-state img {
-  max-width: 200px;
-  margin-bottom: 20px;
+  background: #0f172a;
+  transform: scale(1.03);
 }
 
 .spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #3498db;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   animation: spin 1s linear infinite;
-  margin: 0 auto;
+  margin: 40px auto;
 }
 
 @keyframes spin {
@@ -184,31 +172,15 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+@media screen and (max-width: 1366px) {
   .toy-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
   }
-}
-
-@media (max-width: 768px) {
-  .toy-grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 24px;
+  .container {
+    padding: 20px 20px;
   }
-
-  .toy-image-wrapper {
-    padding-top: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .toy-header h3 {
-    font-size: 1.2rem;
-  }
-
-  .add-cart-btn {
-    font-size: 0.9rem;
-    padding: 8px 10px;
+  .toy-details {
+    padding: 18px;
   }
 }

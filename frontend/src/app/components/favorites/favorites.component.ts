@@ -49,7 +49,6 @@ export class FavoriteComponent implements OnInit{
       next: (res: any) => {
         toy.isFavorite = res.isFavorite;
         if (!res.isFavorite) {
-          // ukloni sa liste lokalno
           this.favorites = this.favorites.filter(t => t._id !== toy._id);
         }
         this.cdr.detectChanges();

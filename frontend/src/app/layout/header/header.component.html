@@ -4,10 +4,18 @@
       <a routerLink="/" (click)="menuOpen = false">ToyWonderland</a>
     </div>
 
+    <nav class="nav-links-desktop">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/toys" routerLinkActive="active">Toys</a>
+      <a routerLink="/favorites" routerLinkActive="active">Favorites</a>
+      <a *ngIf="isLoggedIn" routerLink="/my-reservations" routerLinkActive="active">Reservations</a>
+      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active">Admin</a>
+    </nav>
+
     <div class="header-right">
       <div class="auth-desktop" *ngIf="isLoggedIn">
-        <a routerLink="/profile" class="user-name-link">Zdravo, {{ fullName }}</a>
-        <button class="logout-btn-desktop" (click)="logout()">Logout</button>
+        <span class="user-welcome">Zdravo, {{ fullName }}</span>
+        <button class="logout-btn" (click)="logout()">Logout</button>
       </div>
 
       <div class="auth-desktop" *ngIf="!isLoggedIn">
@@ -15,41 +23,42 @@
         <a routerLink="/register" class="nav-auth-link register-btn">Register</a>
       </div>
 
-      <button class="theme-toggle" (click)="toggleTheme()" type="button">
-        {{ isDarkMode ? '☀️' : '🌙' }}
-      </button>
-
-      <div class="nav-icon-btn cart-mobile" (click)="goToCart()">
-        🛒 <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+      <div class="actions">
+        <button class="theme-toggle" (click)="toggleTheme()">
+          {{ isDarkMode ? '☀️' : '🌙' }}
+        </button>
+        <div class="cart-btn" (click)="goToCart()">
+          🛒 <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </div>
       </div>
 
       <button class="menu-toggle" (click)="toggleMenu()">
         {{ menuOpen ? '✕' : '☰' }}
       </button>
     </div>
-
-    <nav class="nav-links" [class.active]="menuOpen">
-      <div class="menu-section">
-        <span class="menu-label">Meni</span>
-        <a routerLink="/" (click)="menuOpen = false" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        <a routerLink="/toys" (click)="menuOpen = false" routerLinkActive="active">Toys</a>
-        <a *ngIf="isAdmin" (click)="menuOpen = false" routerLink="/admin" routerLinkActive="active">Admin</a>
-      </div>
-
-      <div class="menu-section user-section-mobile">
-        <span class="menu-label">Korisnik</span>
-        <ng-container *ngIf="isLoggedIn; else authLinks">
-          <a routerLink="/profile" (click)="menuOpen = false">Moj Profil</a>
-          <a routerLink="/my-reservations" (click)="menuOpen = false">Moje Rezervacije</a>
-          <button class="menu-logout-btn" (click)="logout()">Logout</button>
-        </ng-container>
-        
-        <ng-template #authLinks>
-          <a routerLink="/login" (click)="menuOpen = false">Login</a>
-          <a routerLink="/register" (click)="menuOpen = false" class="mobile-reg-highlight">Register</a>
-        </ng-template>
-      </div>
-    </nav>
   </div>
 </header>
+
+<nav class="mobile-drawer" [class.active]="menuOpen">
+  <div class="drawer-content">
+    <div class="menu-section">
+      <span class="menu-label">Meni</span>
+      <a routerLink="/" (click)="menuOpen = false">Home</a>
+      <a routerLink="/toys" (click)="menuOpen = false">Toys</a>
+      <a routerLink="/favorites" (click)="menuOpen = false">Favorites</a>
+    </div>
+    <div class="menu-section">
+      <span class="menu-label">Korisnik</span>
+      <ng-container *ngIf="isLoggedIn; else authMobile">
+        <a routerLink="/profile" (click)="menuOpen = false">Profil</a>
+        <a routerLink="/my-reservations" (click)="menuOpen = false">Rezervacije</a>
+        <button class="logout-btn-mobile" (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #authMobile>
+        <a routerLink="/login" (click)="menuOpen = false">Login</a>
+        <a routerLink="/register" (click)="menuOpen = false">Register</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>
 <div class="menu-overlay" [class.active]="menuOpen" (click)="toggleMenu()"></div>

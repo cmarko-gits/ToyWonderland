@@ -4,8 +4,7 @@ export interface Review {
   comment: string;
   createdAt?: string;
   updatedAt?: string;
-    userFullName?: string;  // ime korisnika
-
+    userFullName?: string;  
 }
 
 export interface Toy {

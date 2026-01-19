@@ -27,7 +27,7 @@ export const isAdmin = (req, res, next) => {
 };
 export const getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password"); // izuzmi password
+    const user = await User.findById(req.user.id).select("-password"); 
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     res.json({ user });

@@ -3,7 +3,7 @@ import { register,login , getCurrentUser , updateProfile} from '../controllers/a
 import { auth , isAdmin } from '../middleware/authMiddlware.js';
 import User from '../models/User.js';
 
-const authRouter = express.Router(); // ili authRoutes, ali onda koristi authRoutes
+const authRouter = express.Router(); 
 authRouter.post("/register", register);
 authRouter.post("/login", login);
 authRouter.get("/profile", auth, (req, res) => {

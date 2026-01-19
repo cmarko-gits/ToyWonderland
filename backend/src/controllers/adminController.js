@@ -36,7 +36,7 @@ export const addToy = async (req, res) => {
 
     res.status(201).json({ msg: "Toy added successfully", toy: newToy });
   } catch (error) {
-    console.error("❌ Database Error:", error);
+    console.error(" Database Error:", error);
     
     res.status(500).json({ 
       msg: "Server error", 

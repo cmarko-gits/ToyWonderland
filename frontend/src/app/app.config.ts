@@ -10,7 +10,7 @@ export const appConfig = {
       { path: 'register', component: RegisterComponent },
       { path: '', redirectTo: 'register', pathMatch: 'full' },
     ]),
-    provideHttpClient(withFetch()),  // Enable fetch API
+    provideHttpClient(withFetch()), 
     importProvidersFrom(ReactiveFormsModule)
   ]
 };

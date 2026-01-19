@@ -24,7 +24,7 @@ const cartSchema = new mongoose.Schema(
             ref: "User",
             required: true
         },
-        items: [cartItemSchema] // <-- ovo je ključno
+        items: [cartItemSchema]
     },
     { timestamps: true }
 );

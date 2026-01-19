@@ -79,7 +79,6 @@ export const removeItem = async (req, res) => {
 
         await cart.save();
 
-        // Ponovo uzmi cart sa populate pre slanja
         cart = await Cart.findOne({ userId: req.user.id })
             .populate("items.toyId");
 
@@ -93,7 +92,7 @@ export const removeItem = async (req, res) => {
 export const changeQuantity = async (req, res) => {
     try {
         const { toyId } = req.params;
-        const { change } = req.body; // +1 ili -1
+        const { change } = req.body;
 
         let cart = await Cart.findOne({ userId: req.user.id });
 

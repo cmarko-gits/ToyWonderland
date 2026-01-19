@@ -21,7 +21,7 @@ export class ToyService {
     return this.api.post<any>('cart/add', { toyId, quantity });
   }
 toggleFavorite(toyId: string) {
-  return this.api.post(`toys/${toyId}/favorite`, {});
+  return this.api.post(`toys/${toyId}/favorite`, {},true);
 }
   getFavorites(): Observable<any> {
     return this.api.get<any>('toys/favorites/list', true);

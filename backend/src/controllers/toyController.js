@@ -98,7 +98,7 @@ export const getAllToys = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ getAllToys error:", err);
+    console.error(" getAllToys error:", err);
     res.status(500).json({ msg: "Server error" });
   }
 };
@@ -142,7 +142,7 @@ export const toggleFavorite = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ toggleFavorite error:", err);
+    console.error(" toggleFavorite error:", err);
     res.status(500).json({ msg: "Server error", err });
   }
 };
@@ -156,7 +156,7 @@ export const getFavorites = async (req, res) => {
 
     res.status(200).json({ favorites: user.favorites });
   } catch (error) {
-    console.error("❌ getFavorites error:", error);
+    console.error("getFavorites error:", error);
     res.status(500).json({ msg: "Server Error" });
   }
 };
@@ -175,7 +175,7 @@ export const getToyById = async (req, res) => {
 
     res.status(200).json(toy);
   } catch (err) {
-    console.error("❌ getToyById error:", err);
+    console.error(" getToyById error:", err);
     res.status(500).json({ msg: "Server error" });
   }
 };
@@ -203,7 +203,7 @@ export const rateToy = async (req, res) => {
     if (!toy) return res.status(404).json({ message: "Toy not found" });
 
     const user = await User.findById(userId);
-    const userFullName = user?.fullName || "Anonymous";
+    const userFullName = user?.fullName;
 
     if (!reservationItem.reviewed) {
       reservationItem.reviewed = true;
